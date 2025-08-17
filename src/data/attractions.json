@@ -1,0 +1,91 @@
+{
+  "categories": [
+    "Entertainment & Shows",
+    "Museums & Culture",
+    "Free & Low-Cost Attractions",
+    "Observation Decks & Views",
+    "Walking Tours & Neighborhoods",
+    "Outer Borough Adventures",
+    "Shopping",
+    "Memorial & Historic Sites",
+    "Food Experiences",
+    "Transportation/Sightseeing"
+  ],
+  "attractions": [
+    {
+      "id": "broadway-theatre",
+      "name": "Broadway Theatre",
+      "category": "Entertainment & Shows",
+      "tags": ["theatre", "indoor", "expensive", "evening", "midtown"],
+      "priceRange": "$120-200",
+      "duration": "2.5-3 hours",
+      "location": "Theatre District, Midtown Manhattan",
+      "resources": ["broadwaydirects.com"],
+      "notes": "Major productions, 1000+ seat venues",
+      "nearbyAttractions": ["Hell's Kitchen"],
+      "walkingDistance": "20-min walk"
+    },
+    {
+      "id": "off-broadway-theatre",
+      "name": "Off-Broadway Theatre",
+      "category": "Entertainment & Shows",
+      "tags": ["theatre", "indoor", "moderate-price", "evening", "various-locations"],
+      "priceRange": "$30-80",
+      "duration": "1.5-2.5 hours",
+      "location": "Various smaller venues throughout NYC",
+      "venueSize": "Under 1000 seats (typically ~500)",
+      "notes": "Smaller, more intimate productions",
+      "todos": ["Find specific resources/websites"],
+      "nearbyAttractions": ["Varies by venue location"],
+      "walkingDistance": "20-min walk"
+    },
+    {
+      "id": "comedy-clubs",
+      "name": "Comedy Clubs",
+      "category": "Entertainment & Shows",
+      "tags": ["comedy", "indoor", "evening", "nightlife"],
+      "priceRange": "Up to $50",
+      "duration": "1.5-2 hours",
+      "notes": "Stand-up comedy, various venues citywide",
+      "nearbyAttractions": ["local restaurants and bars"],
+      "walkingDistance": "20-min walk"
+    },
+    {
+      "id": "famous-comedian-shows",
+      "name": "Famous Comedian Shows",
+      "category": "Entertainment & Shows",
+      "tags": ["comedy", "indoor", "expensive", "evening", "special-event"],
+      "priceRange": "$75-300+",
+      "duration": "1.5-2 hours",
+      "notes": "Research specific comedians and venues",
+      "nearbyAttractions": ["Varies by venue location"],
+      "walkingDistance": "20-min walk"
+    },
+    {
+      "id": "moma",
+      "name": "Museum of Modern Art (MOMA)",
+      "category": "Museums & Culture",
+      "tags": ["museum", "art", "indoor", "midtown"],
+      "priceRange": "~$5 (with membership addition)",
+      "duration": "2-4 hours",
+      "location": "Midtown Manhattan",
+      "resources": ["moma.org"],
+      "notes": "Modern and contemporary art",
+      "nearbyAttractions": ["New York Public Library"],
+      "walkingDistance": "20-min walk"
+    },
+    {
+      "id": "met-museum",
+      "name": "Metropolitan Museum of Art",
+      "category": "Museums & Culture",
+      "tags": ["museum", "art", "indoor", "upper-east-side", "large"],
+      "priceRange": "Nominal fee (NYC resident)",
+      "duration": "3-6 hours (choose sections)",
+      "location": "Upper East Side",
+      "resources": ["metmuseum.org"],
+      "notes": "Massive museum, plan specific sections",
+      "nearbyAttractions": ["Upper East Side shopping/dining"],
+      "walkingDistance": "20-min walk"
+    }
+  ]
+}
