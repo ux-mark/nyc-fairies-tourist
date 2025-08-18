@@ -121,13 +121,13 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
       return []
     }
 
-  return (data || []).map((trip: any) => ({
-      id: trip.id,
-      name: trip.name,
-      start_date: trip.start_date,
-      end_date: trip.end_date,
-      created_at: trip.created_at,
-      attraction_count: trip.scheduled_attractions?.[0]?.count || 0
+  return (data || []).map((trip: Record<string, any>) => ({
+      id: trip.id as string,
+      name: trip.name as string,
+      start_date: trip.start_date as string,
+      end_date: trip.end_date as string,
+      created_at: trip.created_at as string,
+      attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? (trip.scheduled_attractions[0].count as number) : 0
     }))
   } catch (error) {
     console.error('Load user trips error:', error)
@@ -142,8 +142,8 @@ export const loadTripDetails = async (
   tripId: string, 
   phoneNumber: string
 ): Promise<{
-  schedule: any
-  attractions: any[]
+  schedule: Record<string, unknown>
+  attractions: Attraction[]
   days: ScheduleDay[]
 } | null> => {
   try {
@@ -181,17 +181,13 @@ export const loadTripDetails = async (
       if (!daysMap.has(attr.day_date)) {
         daysMap.set(attr.day_date, [])
       }
-      
       // Create attraction object matching your existing structure
       const attraction: Attraction = {
-        id: attr.attraction_id,
-        name: attr.attraction_name,
-        // Note: Other fields like category, tags, etc. should be loaded from attractions.json
-        // using the attraction_id to maintain data consistency
-        category: '', // Will be populated from attractions.json
-        tags: [],     // Will be populated from attractions.json
+        id: attr.attraction_id as string,
+        name: attr.attraction_name as string,
+        category: '',
+        tags: [],
       }
-      
       daysMap.get(attr.day_date)!.push(attraction)
     })
 

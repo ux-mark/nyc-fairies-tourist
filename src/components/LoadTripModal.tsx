@@ -26,7 +26,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
       const userTrips = await getUserTrips(phoneNumber.trim())
       setTrips(userTrips)
       setStep('select')
-    } catch (err) {
+    } catch {
       setError('Failed to load trips. Please check your phone number and try again.')
     }
     
@@ -45,7 +45,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
       } else {
         setError('Failed to load trip. Please try again.')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to load trip. Please try again.')
     }
     

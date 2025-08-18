@@ -32,7 +32,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
       } else {
         setError('Failed to delete data. Please try again or contact support.')
       }
-    } catch (err) {
+    } catch {
       setError('Failed to delete data. Please try again or contact support.')
     }
     

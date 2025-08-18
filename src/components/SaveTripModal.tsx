@@ -69,7 +69,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
             <div className="text-green-500 text-4xl mb-4">✓</div>
             <h3 className="text-lg font-bold mb-2">Trip Saved Successfully!</h3>
             <p className="text-muted-foreground mb-4">
-              Your trip "{tripName}" with {totalAttractions} attractions has been saved.
+              Your trip &quot;{tripName}&quot; with {totalAttractions} attractions has been saved.
             </p>
             <p className="text-sm text-muted-foreground">
               Use your phone number to load this trip on any device.
