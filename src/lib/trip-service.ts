@@ -114,7 +114,7 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
           // No-op: setUserContext disabled for client-side
           const { data, error } = await supabase
             .from('trip_schedules')
-            .select(`id, name, start_date, end_date, created_at, scheduled_attractions(count)`)
+            .select('id, name, start_date, end_date, created_at, scheduled_attractions(count)')
             .eq('is_active', true)
             .order('created_at', { ascending: false })
 
@@ -131,38 +131,6 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
             created_at: trip.created_at,
             attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
           }))
-        try {
-          // No-op: setUserContext disabled for client-side
-          const { data, error } = await supabase
-            .from('trip_schedules')
-            .select(`
-              id,
-              name,
-              start_date,
-              end_date,
-              created_at,
-              scheduled_attractions(count)
-            `)
-            .eq('is_active', true)
-            .order('created_at', { ascending: false })
-
-          if (error) {
-            console.error('Load trips error:', error)
-            return []
-          }
-
-          return (data || []).map((trip: SavedTrip & { scheduled_attractions?: { count: number }[] }) => ({
-            id: trip.id,
-            name: trip.name,
-            start_date: trip.start_date,
-            end_date: trip.end_date,
-            created_at: trip.created_at,
-            attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
-          }))
-        } catch (error) {
-          console.error('Load user trips error:', error)
-          return []
-        }
       const a = attr as { day_date: string; attraction_id: string; attraction_name: string }
       if (!daysMap.has(a.day_date)) {
         daysMap.set(a.day_date, [])
