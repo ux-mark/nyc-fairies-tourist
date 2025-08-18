@@ -1032,10 +1032,10 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
           resetForm()
         }, 3000)
       } else {
-        setError('Failed to delete data. Please try again or contact support.')
+        setError('Failed to delete data. Please try again or contact the Fairies.')
       }
     } catch (err) {
-      setError('Failed to delete data. Please try again or contact support.')
+      setError('Failed to delete data. Please try again or contact the Fairies.')
     }
     
     setLoading(false)

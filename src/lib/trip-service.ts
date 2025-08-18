@@ -110,84 +110,71 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
         name,
         start_date,
         end_date,
-        created_at,
-        scheduled_attractions(count)
-      `)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
+        try {
+          // No-op: setUserContext disabled for client-side
+          const { data, error } = await supabase
+            .from('trip_schedules')
+            .select(`id, name, start_date, end_date, created_at, scheduled_attractions(count)`)
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Load trips error:', error)
-      return []
-    }
+          if (error) {
+            console.error('Load trips error:', error)
+            return []
+          }
 
-  return (data || []).map((trip: SavedTrip & { scheduled_attractions?: { count: number }[] }) => ({
-      id: trip.id,
-      name: trip.name,
-      start_date: trip.start_date,
-      end_date: trip.end_date,
-      created_at: trip.created_at,
-      attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
-    }))
-  } catch (error) {
-    console.error('Load user trips error:', error)
-    return []
-  }
-}
+          return (data || []).map((trip: SavedTrip & { scheduled_attractions?: { count: number }[] }) => ({
+            id: trip.id,
+            name: trip.name,
+            start_date: trip.start_date,
+            end_date: trip.end_date,
+            created_at: trip.created_at,
+            attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
+          }))
+        try {
+          // No-op: setUserContext disabled for client-side
+          const { data, error } = await supabase
+            .from('trip_schedules')
+            .select(`
+              id,
+              name,
+              start_date,
+              end_date,
+              created_at,
+              scheduled_attractions(count)
+            `)
+            .eq('is_active', true)
+            .order('created_at', { ascending: false })
 
-/**
- * Load complete trip details including all attractions
- */
-export const loadTripDetails = async (
-  tripId: string
-): Promise<{
-  schedule: Record<string, unknown>
-  attractions: Attraction[]
-  days: ScheduleDay[]
-} | null> => {
-  try {
-  // No-op: setUserContext disabled for client-side
-    
-    // Get trip schedule
-    const { data: schedule, error: scheduleError } = await supabase
-      .from('trip_schedules')
-      .select('*')
-      .eq('id', tripId)
-      .eq('is_active', true)
-      .single()
+          if (error) {
+            console.error('Load trips error:', error)
+            return []
+          }
 
-    if (scheduleError || !schedule) {
-      console.error('Schedule load error:', scheduleError)
-      return null
-    }
-
-    // Get attractions
-    const { data: attractions, error: attractionsError } = await supabase
-      .from('scheduled_attractions')
-      .select('*')
-      .eq('schedule_id', tripId)
-      .order('day_date', { ascending: true })
-
-    if (attractionsError) {
-      console.error('Attractions load error:', attractionsError)
-      return null
-    }
-
-    // Reconstruct days array matching your existing format
-    const daysMap = new Map<string, Attraction[]>()
-    
-  attractions?.forEach((attr: any) => {
-      if (!daysMap.has(attr.day_date)) {
-        daysMap.set(attr.day_date, [])
+          return (data || []).map((trip: SavedTrip & { scheduled_attractions?: { count: number }[] }) => ({
+            id: trip.id,
+            name: trip.name,
+            start_date: trip.start_date,
+            end_date: trip.end_date,
+            created_at: trip.created_at,
+            attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
+          }))
+        } catch (error) {
+          console.error('Load user trips error:', error)
+          return []
+        }
+      const a = attr as { day_date: string; attraction_id: string; attraction_name: string }
+      if (!daysMap.has(a.day_date)) {
+        daysMap.set(a.day_date, [])
       }
       // Create attraction object matching your existing structure
       const attraction: Attraction = {
-        id: attr.attraction_id,
-        name: attr.attraction_name,
+        id: a.attraction_id,
+        name: a.attraction_name,
         category: '',
         tags: [],
       }
-      daysMap.get(attr.day_date)!.push(attraction)
+      daysMap.get(a.day_date)!.push(attraction)
     })
 
     // Generate complete days array including empty days
