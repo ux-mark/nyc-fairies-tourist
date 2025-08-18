@@ -67,7 +67,7 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
 
   const loadTrip = async (phoneNumber: string, tripId: string): Promise<boolean> => {
     try {
-      const tripData = await loadTripDetails(tripId, phoneNumber);
+      const tripData = await loadTripDetails(tripId);
       if (!tripData) return false;
       const allAttractions = getAttractions();
       const attractionMap = new Map(allAttractions.map(a => [a.id, a]));
