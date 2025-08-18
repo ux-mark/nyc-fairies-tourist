@@ -1,6 +1,11 @@
 
 "use client";
 import React from "react";
+import { useState } from "react";
+import { useEffect } from "react";
+import SaveTripModal from "./SaveTripModal";
+import LoadTripModal from "./LoadTripModal";
+import DataManagementModal from "./DataManagementModal";
 import { useSchedule } from "../lib/schedule-context";
 
 export default function TripSchedule() {
@@ -15,15 +20,25 @@ export default function TripSchedule() {
     reset,
   } = useSchedule();
 
-  // Format date for display
-  const formatDay = (date: string) => {
-    const d = new Date(date);
-    return d.toLocaleDateString(undefined, {
-      weekday: "long",
-      day: "2-digit",
-      month: "short",
-    });
-  };
+  // Modal state
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showLoadModal, setShowLoadModal] = useState(false);
+  const [showDataModal, setShowDataModal] = useState(false);
+
+  // Format date for display (client-only)
+  const [formattedDays, setFormattedDays] = useState<string[]>([]);
+  useEffect(() => {
+    setFormattedDays(
+      days.map(day => {
+        const d = new Date(day.date);
+        return d.toLocaleDateString(undefined, {
+          weekday: "long",
+          day: "2-digit",
+          month: "short",
+        });
+      })
+    );
+  }, [days]);
 
   // Ref for end date input
   const endDateRef = React.useRef<HTMLInputElement>(null);
@@ -64,12 +79,38 @@ export default function TripSchedule() {
             ref={endDateRef}
           />
         </div>
-        <button
-          className="text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-          onClick={reset}
-        >
-          Reset Schedule
-        </button>
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <button
+              className="flex-1 text-xs px-3 py-1 rounded bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+              onClick={() => setShowSaveModal(true)}
+              disabled={days.length === 0 || days.every(day => day.items.length === 0)}
+              title={days.length === 0 ? "Set trip dates first" : "Save your current trip"}
+            >
+              Save Trip
+            </button>
+            <button
+              className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              onClick={() => setShowLoadModal(true)}
+            >
+              Load Trip
+            </button>
+          </div>
+          <div className="flex gap-2">
+            <button
+              className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              onClick={reset}
+            >
+              Reset Schedule
+            </button>
+            <button
+              className="flex-1 text-xs px-3 py-1 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
+              onClick={() => setShowDataModal(true)}
+            >
+              Delete My Data
+            </button>
+          </div>
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         {days.length === 0 ? (
@@ -85,7 +126,7 @@ export default function TripSchedule() {
                 onClick={() => setActiveDay(i)}
                 aria-current={activeDayIndex === i ? "date" : undefined}
               >
-                {formatDay(day.date)}
+                {formattedDays[i] || day.date}
               </button>
               {day.items.length === 0 ? (
                 <div className="text-sm text-muted-foreground text-center">+ Add Attractions</div>
@@ -109,6 +150,9 @@ export default function TripSchedule() {
           ))
         )}
       </div>
+      <SaveTripModal isOpen={showSaveModal} onClose={() => setShowSaveModal(false)} />
+      <LoadTripModal isOpen={showLoadModal} onClose={() => setShowLoadModal(false)} />
+      <DataManagementModal isOpen={showDataModal} onClose={() => setShowDataModal(false)} />
     </aside>
   );
 }

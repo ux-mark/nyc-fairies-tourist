@@ -1,6 +1,6 @@
 # NYC Tourist Info Website
 
-This project is a modern, responsive NYC trip planning website built with Next.js, Tailwind CSS v4.1, and Shadcn UI. It uses static site generation and is ready for deployment on Vercel or Digital Ocean App Platform (static hosting). Data is sourced from `src/data/attractions.json`.
+This project is a modern, responsive NYC trip planning website built with Next.js, Tailwind CSS v4.1, and Shadcn UI. It uses static site generation and is ready for deployment on Vercel. Data is sourced from `src/data/attractions.json`.
 
 ## Features
 - Responsive design for all devices
@@ -25,7 +25,6 @@ This project is a modern, responsive NYC trip planning website built with Next.j
 
 ## Deployment
 - Vercel: Static site hosting
-- Digital Ocean: App Platform static site
 
 ## Data
 See `src/data/attractions.json` for attractions and categories.

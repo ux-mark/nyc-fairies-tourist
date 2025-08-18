@@ -1,6 +1,15 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import type { Attraction } from "./attractions";
+import {
+  saveTrip as saveTripToDb,
+  loadUserTrips,
+  loadTripDetails,
+  deleteUserData as deleteUserDataFromDb,
+  type SavedTrip,
+  type SaveTripResult
+} from './trip-service';
+import { getAttractions } from './attractions';
 
 export type ScheduleDay = {
   date: string;
@@ -20,6 +29,10 @@ export type ScheduleActions = {
   addToActiveDay: (a: Attraction) => void;
   removeFromDay: (i: number, id: string) => void;
   reset: () => void;
+  saveTrip: (phoneNumber: string, tripName: string) => Promise<SaveTripResult>;
+  loadTrip: (phoneNumber: string, tripId: string) => Promise<boolean>;
+  getUserTrips: (phoneNumber: string) => Promise<SavedTrip[]>;
+  deleteUserData: (phoneNumber: string) => Promise<boolean>;
 };
 
 const ScheduleContext = createContext<ScheduleState & ScheduleActions | undefined>(undefined);
@@ -41,6 +54,49 @@ function getDaysInRange(start: string | null, end: string | null): string[] {
 const LOCAL_KEY = "nyc_schedule_v1";
 
 export function ScheduleProvider({ children }: { children: ReactNode }) {
+  // Trip persistence methods
+  const saveTrip = async (phoneNumber: string, tripName: string): Promise<SaveTripResult> => {
+    if (!startDate || !endDate) {
+      return { success: false, error: 'Please set trip dates first' };
+    }
+    if (days.every(day => day.items.length === 0)) {
+      return { success: false, error: 'Please add some attractions to your trip first' };
+    }
+    return await saveTripToDb(phoneNumber, tripName, startDate, endDate, days);
+  };
+
+  const loadTrip = async (phoneNumber: string, tripId: string): Promise<boolean> => {
+    try {
+      const tripData = await loadTripDetails(tripId, phoneNumber);
+      if (!tripData) return false;
+      const allAttractions = getAttractions();
+      const attractionMap = new Map(allAttractions.map(a => [a.id, a]));
+      const enrichedDays = tripData.days.map(day => ({
+        ...day,
+        items: day.items.map(item => attractionMap.get(item.id) || item)
+      }));
+      setStartDate(tripData.schedule.start_date);
+      setEndDate(tripData.schedule.end_date);
+      setDays(enrichedDays);
+      setActiveDayIndex(0);
+      return true;
+    } catch (error) {
+      console.error('Failed to load trip:', error);
+      return false;
+    }
+  };
+
+  const getUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> => {
+    return await loadUserTrips(phoneNumber);
+  };
+
+  const deleteUserData = async (phoneNumber: string): Promise<boolean> => {
+    const success = await deleteUserDataFromDb(phoneNumber);
+    if (success) {
+      reset();
+    }
+    return success;
+  };
   const [startDate, setStartDate] = useState<string | null>(null);
   const [endDate, setEndDate] = useState<string | null>(null);
   const [days, setDays] = useState<ScheduleDay[]>([]);
@@ -110,7 +166,21 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
 
   return (
     <ScheduleContext.Provider
-      value={{ startDate, endDate, days, activeDayIndex, setDateRange, setActiveDay, addToActiveDay, removeFromDay, reset }}
+      value={{
+        startDate,
+        endDate,
+        days,
+        activeDayIndex,
+        setDateRange,
+        setActiveDay,
+        addToActiveDay,
+        removeFromDay,
+        reset,
+        saveTrip,
+        loadTrip,
+        getUserTrips,
+        deleteUserData
+      }}
     >
       {children}
     </ScheduleContext.Provider>
