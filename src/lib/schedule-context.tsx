@@ -30,7 +30,7 @@ function getDaysInRange(start: string | null, end: string | null): string[] {
   const endDate = new Date(end);
   if (isNaN(startDate.getTime()) || isNaN(endDate.getTime()) || endDate < startDate) return [];
   const days: string[] = [];
-  let d = new Date(startDate);
+    const d = new Date(startDate);
   while (d <= endDate) {
     days.push(d.toISOString().slice(0, 10));
     d.setDate(d.getDate() + 1);

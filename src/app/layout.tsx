@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Header from "../components/Header";
-import MobileScheduleFooter from "../components/MobileScheduleFooter";
 import ClientMobileFooter from "../components/ClientMobileFooter";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
