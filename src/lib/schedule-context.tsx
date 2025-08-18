@@ -75,8 +75,8 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
         ...day,
         items: day.items.map(item => attractionMap.get(item.id) || item)
       }));
-      setStartDate(tripData.schedule.start_date);
-      setEndDate(tripData.schedule.end_date);
+  setStartDate(tripData.schedule.start_date as string);
+  setEndDate(tripData.schedule.end_date as string);
       setDays(enrichedDays);
       setActiveDayIndex(0);
       return true;
