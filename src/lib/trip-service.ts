@@ -30,13 +30,13 @@ export const saveTrip = async (
   try {
   // No-op: setUserContext disabled for client-side
     
-    // Create or get user record
+    // Create or get user record (upsert with conflict on phone_number)
     const { data: user, error: userError } = await supabase
       .from('users')
-      .upsert({ 
-        phone_number: phoneNumber,
-        updated_at: new Date().toISOString()
-      })
+      .upsert(
+        { phone_number: phoneNumber, updated_at: new Date().toISOString() },
+        { onConflict: 'phone_number' }
+      )
       .select()
       .single()
 
