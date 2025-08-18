@@ -147,7 +147,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
               <div className="text-center py-8">
                 <div className="text-muted-foreground mb-2">No saved trips found</div>
                 <p className="text-sm text-muted-foreground">
-                  No trips found for this phone number. Make sure you're using the same number you used to save your trips.
+                  No trips found for this phone number. Make sure you&apos;re using the same number you used to save your trips.
                 </p>
               </div>
             ) : (

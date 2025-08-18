@@ -121,13 +121,13 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
       return []
     }
 
-  return (data || []).map((trip: Record<string, any>) => ({
-      id: trip.id as string,
-      name: trip.name as string,
-      start_date: trip.start_date as string,
-      end_date: trip.end_date as string,
-      created_at: trip.created_at as string,
-      attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? (trip.scheduled_attractions[0].count as number) : 0
+  return (data || []).map((trip: SavedTrip & { scheduled_attractions?: { count: number }[] }) => ({
+      id: trip.id,
+      name: trip.name,
+      start_date: trip.start_date,
+      end_date: trip.end_date,
+      created_at: trip.created_at,
+      attraction_count: Array.isArray(trip.scheduled_attractions) && trip.scheduled_attractions.length > 0 ? trip.scheduled_attractions[0].count : 0
     }))
   } catch (error) {
     console.error('Load user trips error:', error)
@@ -139,8 +139,7 @@ export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> =
  * Load complete trip details including all attractions
  */
 export const loadTripDetails = async (
-  tripId: string, 
-  phoneNumber: string
+  tripId: string
 ): Promise<{
   schedule: Record<string, unknown>
   attractions: Attraction[]
@@ -183,8 +182,8 @@ export const loadTripDetails = async (
       }
       // Create attraction object matching your existing structure
       const attraction: Attraction = {
-        id: attr.attraction_id as string,
-        name: attr.attraction_name as string,
+        id: attr.attraction_id,
+        name: attr.attraction_name,
         category: '',
         tags: [],
       }
@@ -242,8 +241,7 @@ export const deleteUserData = async (phoneNumber: string): Promise<boolean> => {
  * Soft delete a specific trip
  */
 export const deleteTripById = async (
-  tripId: string, 
-  phoneNumber: string
+  tripId: string
 ): Promise<boolean> => {
   try {
   // No-op: setUserContext disabled for client-side

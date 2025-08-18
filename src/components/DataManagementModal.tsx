@@ -75,7 +75,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
               <ul className="text-xs text-red-700 list-disc list-inside space-y-1">
                 <li>All your saved trips will be permanently deleted</li>
                 <li>Your phone number will be removed from our system</li>
-                <li>You won't be able to recover this data</li>
+                <li>You won&apos;t be able to recover this data</li>
               </ul>
             </div>
             
