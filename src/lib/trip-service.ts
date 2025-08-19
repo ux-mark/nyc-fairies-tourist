@@ -88,10 +88,24 @@ export const saveTrip = async (
 
 export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> => {
   try {
+    // First, look up the user by phone number
+    const { data: user, error: userError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('phone_number', phoneNumber)
+      .single();
+
+    if (userError || !user) {
+      console.error('User lookup error:', userError);
+      return [];
+    }
+
+    // Now, load trips for this user_id
     const { data, error } = await supabase
       .from('trip_schedules')
       .select('id, name, start_date, end_date, created_at, scheduled_attractions(count)')
       .eq('is_active', true)
+      .eq('user_id', user.id)
       .order('created_at', { ascending: false });
 
     if (error) {
