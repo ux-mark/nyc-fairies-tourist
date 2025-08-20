@@ -38,6 +38,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
       getUserTrips(userId)
         .then((trips) => {
           setTrips(trips);
+          setError(''); // Clear error when trips are loaded
           debugLog('[LoadTripModal] Loaded trips', trips);
         })
         .catch((err) => {
@@ -46,7 +47,8 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
         })
         .finally(() => setLoading(false));
     } else {
-      setError('You must be logged in to load your trips.')
+      setTrips([]);
+      setError('You must be logged in to load your trips.');
       debugLog('[LoadTripModal] Load failed: user not logged in', { user });
     }
   }, [user, getUserTrips])
@@ -100,7 +102,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         <h3 className="text-lg font-bold mb-4">Your Saved Trips</h3>
-        {error && (
+        {error && trips.length === 0 && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
             {error}
           </div>
