@@ -18,15 +18,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const getSession = async () => {
-  const { data } = await supabase.auth.getSession();
-  setSession(data?.session || null);
-  setUser(data?.session?.user || null);
-  setLoading(false);
+      const { data } = await supabase.auth.getSession();
+      setSession(data?.session || null);
+      setUser(data?.session?.user || null);
+      // Debug log: inspect user object
+      console.log('[AuthProvider] Supabase user object:', data?.session?.user);
+      setLoading(false);
     };
     getSession();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user || null);
+      // Debug log: inspect user object on auth state change
+      console.log('[AuthProvider] Supabase user object (onAuthStateChange):', session?.user);
       setLoading(false);
     });
     return () => {

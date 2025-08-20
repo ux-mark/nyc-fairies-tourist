@@ -18,7 +18,7 @@ export default function AttractionsList() {
         const data = await getAttractions();
         setAllAttractions(data);
         setFiltered(data);
-      } catch (err) {
+        } catch {
           setAllAttractions([]);
           setFiltered([]);
       } finally {
