@@ -85,59 +85,72 @@ export default function TripSchedule() {
     <aside id="trip-schedule-section" className="w-full max-w-xs mx-auto">
       <h2 className="text-xl font-bold mb-4 text-center">Trip Schedule</h2>
       <div className="flex flex-col gap-4 mb-4">
-        <div className="flex gap-2 items-center justify-center">
-          <label htmlFor="start-date" className="text-sm font-medium">Start Date</label>
-          <input
-            id="start-date"
-            type="date"
-            className="px-2 py-1 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-            value={startDate ?? ""}
-            onChange={handleStartDateChange}
-          />
-        </div>
-        <div className="flex gap-2 items-center justify-center">
-          <label htmlFor="end-date" className="text-sm font-medium">End Date</label>
-          <input
-            id="end-date"
-            type="date"
-            className="px-2 py-1 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-            value={endDate ?? ""}
-            onChange={e => setDateRange(startDate, e.target.value)}
-            ref={endDateRef}
-          />
-        </div>
-        <div className="space-y-2">
-          <div className="flex gap-2">
+        {user ? (
+          <>
+            <div className="flex gap-2 items-center justify-center">
+              <label htmlFor="start-date" className="text-sm font-medium">Start Date</label>
+              <input
+                id="start-date"
+                type="date"
+                className="px-2 py-1 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                value={startDate ?? ""}
+                onChange={handleStartDateChange}
+              />
+            </div>
+            <div className="flex gap-2 items-center justify-center">
+              <label htmlFor="end-date" className="text-sm font-medium">End Date</label>
+              <input
+                id="end-date"
+                type="date"
+                className="px-2 py-1 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                value={endDate ?? ""}
+                onChange={e => setDateRange(startDate, e.target.value)}
+                ref={endDateRef}
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex gap-2">
+                <button
+                  className="flex-1 text-xs px-3 py-1 rounded bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
+                  onClick={() => requireAuth('save')}
+                  disabled={days.length === 0 || days.every(day => day.items.length === 0)}
+                  title={days.length === 0 ? "Set trip dates first" : "Save your current trip"}
+                >
+                  Save Trip
+                </button>
+                <button
+                  className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  onClick={() => requireAuth('load')}
+                >
+                  Load Trip
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                  onClick={reset}
+                >
+                  Reset Schedule
+                </button>
+                <button
+                  className="flex-1 text-xs px-3 py-1 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
+                  onClick={() => requireAuth('delete')}
+                >
+                  Delete My Data
+                </button>
+              </div>
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col gap-4 items-center justify-center py-8">
             <button
-              className="flex-1 text-xs px-3 py-1 rounded bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
-              onClick={() => requireAuth('save')}
-              disabled={days.length === 0 || days.every(day => day.items.length === 0)}
-              title={days.length === 0 ? "Set trip dates first" : "Save your current trip"}
+              className="w-full px-4 py-2 rounded bg-primary text-primary-foreground font-semibold hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+              onClick={() => setShowAuthModal(true)}
             >
-              Save Trip
-            </button>
-            <button
-              className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-              onClick={() => requireAuth('load')}
-            >
-              Load Trip
+              Log in to start planning, saving, and loading your trip
             </button>
           </div>
-          <div className="flex gap-2">
-            <button
-              className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-              onClick={reset}
-            >
-              Reset Schedule
-            </button>
-            <button
-              className="flex-1 text-xs px-3 py-1 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
-              onClick={() => requireAuth('delete')}
-            >
-              Delete My Data
-            </button>
-          </div>
-        </div>
+        )}
       </div>
       <div className="flex flex-col gap-4">
         {days.length === 0 ? (
@@ -176,7 +189,7 @@ export default function TripSchedule() {
             </div>
           ))
         )}
-      </div>
+  </div>
       <SaveTripModal isOpen={showSaveModal} onClose={() => setShowSaveModal(false)} />
       <LoadTripModal isOpen={showLoadModal} onClose={() => setShowLoadModal(false)} />
       <DataManagementModal isOpen={showDataModal} onClose={() => setShowDataModal(false)} />

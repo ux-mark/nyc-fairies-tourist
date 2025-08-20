@@ -1,5 +1,6 @@
 import React from "react";
 import { useSchedule } from "../lib/schedule-context";
+import { useAuth } from "../lib/auth-context";
 
 export default function MobileScheduleFooter() {
   const {
@@ -10,6 +11,7 @@ export default function MobileScheduleFooter() {
     startDate,
     endDate,
   } = useSchedule();
+  const { user } = useAuth();
 
   // Format date for display
   const formatDay = (date: string) => {
@@ -21,6 +23,26 @@ export default function MobileScheduleFooter() {
     });
   };
 
+  // If not logged in, show login CTA
+  if (!user) {
+    const handleLogin = () => {
+      const el = document.getElementById("trip-schedule-section");
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+      // Optionally trigger AuthModal if available globally
+    };
+    return (
+      <footer className="fixed bottom-0 left-0 w-full max-h-32 bg-card border-t border-border shadow-lg z-50 flex items-center justify-center pt-4 pb-2">
+        <button
+          className="px-6 py-3 rounded-lg bg-primary text-primary-foreground font-semibold shadow focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+          onClick={handleLogin}
+        >
+          Log in to start planning your trip
+        </button>
+      </footer>
+    );
+  }
   // If no date range, show button to scroll to TripSchedule
   if (!startDate || !endDate) {
     const handleScroll = () => {
