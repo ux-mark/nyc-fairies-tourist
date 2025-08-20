@@ -17,9 +17,9 @@ export default function Header() {
 			<div className="flex items-center gap-3 ml-auto">
 				{loading ? null : user ? (
 					<>
-						<span className="text-sm font-medium bg-muted text-muted-foreground px-3 py-1 rounded">
-							{user.email}
-						</span>
+									<span className="text-sm font-medium bg-muted text-muted-foreground px-3 py-1 rounded">
+										  {typeof user === 'object' && user !== null && 'email' in user ? (user as { email: string }).email : ''}
+									</span>
 						<button
 							className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
 							onClick={signOut}
