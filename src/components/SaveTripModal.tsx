@@ -1,7 +1,13 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSchedule } from '../lib/schedule-context'
 import { useAuth } from '../lib/auth-context'
+import { debugLog } from '../lib/utils';
+
+interface SaveTripModalProps {
+  isOpen: boolean
+  onClose: () => void
+}
 
 interface SaveTripModalProps {
   isOpen: boolean
@@ -9,6 +15,9 @@ interface SaveTripModalProps {
 }
 
 export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
+  useEffect(() => {
+    debugLog('[SaveTripModal] Opened modal');
+  }, []);
   // No email state needed
   const [tripName, setTripName] = useState('My NYC Trip')
   const [loading, setLoading] = useState(false)
@@ -24,15 +33,18 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
+  setError('')
+  debugLog('[SaveTripModal] Attempting to save trip', { user, tripName });
     
     // Use authenticated user's user_id
     if (typeof user !== 'object' || user === null || !('id' in user)) {
-      setError('You must be logged in to save a trip.')
+  setError('You must be logged in to save a trip.')
+  debugLog('[SaveTripModal] Save failed: user not logged in', { user });
       setLoading(false)
       return
     }
     const result = await saveTrip((user as { id: string }).id, tripName.trim())
+  debugLog('[SaveTripModal] SaveTrip result', result);
     
     if (result.success) {
       setSuccess(true)
@@ -42,7 +54,9 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
         resetForm()
       }, 2500)
     } else {
-      setError(result.error || 'Failed to save trip. Please try again.')
+  setError(result.error || 'Failed to save trip. Please try again.')
+  debugLog('[SaveTripModal] Save failed', result.error);
+  debugLog('[SaveTripModal] Save successful', result);
     }
     
     setLoading(false)

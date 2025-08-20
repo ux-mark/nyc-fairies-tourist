@@ -1,6 +1,7 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from './supabase';
+import { debugLog } from './utils';
 
 interface AuthContextType {
   user: unknown;
@@ -21,16 +22,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const { data } = await supabase.auth.getSession();
       setSession(data?.session || null);
       setUser(data?.session?.user || null);
-      // Debug log: inspect user object
-      console.log('[AuthProvider] Supabase user object:', data?.session?.user);
+  debugLog('[AuthProvider] Supabase user object:', data?.session?.user);
       setLoading(false);
     };
     getSession();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user || null);
-      // Debug log: inspect user object on auth state change
-      console.log('[AuthProvider] Supabase user object (onAuthStateChange):', session?.user);
+  debugLog('[AuthProvider] Supabase user object (onAuthStateChange):', session?.user);
       setLoading(false);
     });
     return () => {

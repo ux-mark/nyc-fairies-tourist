@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { useSchedule } from '../lib/schedule-context'
 import { useAuth } from '../lib/auth-context'
+import { debugLog } from '../lib/utils';
 import type { SavedTrip } from '../lib/trip-service'
 
 interface LoadTripModalProps {
@@ -10,6 +11,9 @@ interface LoadTripModalProps {
 }
 
 export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
+  React.useEffect(() => {
+    debugLog('[LoadTripModal] Opened modal');
+  }, []);
   // No email state needed
   const [trips, setTrips] = useState<SavedTrip[]>([])
   const [loading, setLoading] = useState(false)
@@ -19,19 +23,28 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
 
   React.useEffect(() => {
     if (typeof user === 'object' && user !== null && 'id' in user) {
-      setLoading(true)
+      debugLog('[LoadTripModal] Attempting to load trips', { user });
+      setLoading(true);
       getUserTrips((user as { id: string }).id)
-        .then(setTrips)
-        .catch(() => setError('Failed to load trips.'))
-        .finally(() => setLoading(false))
+        .then((trips) => {
+          setTrips(trips);
+          debugLog('[LoadTripModal] Loaded trips', trips);
+        })
+        .catch((err) => {
+          setError('Failed to load trips.');
+          debugLog('[LoadTripModal] Load failed', err);
+        })
+        .finally(() => setLoading(false));
     } else {
       setError('You must be logged in to load your trips.')
+      debugLog('[LoadTripModal] Load failed: user not logged in', { user });
     }
   }, [user, getUserTrips])
 
   const handleLoadTrip = async (tripId: string) => {
     setLoading(true)
     setError('')
+    debugLog('[LoadTripModal] Attempting to load trip', { user, tripId });
     try {
       if (typeof user === 'object' && user !== null && 'id' in user) {
         const success = await loadTrip((user as { id: string }).id, tripId)
@@ -40,9 +53,11 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
           resetForm()
         } else {
           setError('Failed to load trip. Please try again.')
+          debugLog('[LoadTripModal] LoadTrip failed', { user, tripId });
         }
       } else {
         setError('You must be logged in to load your trips.')
+        debugLog('[LoadTripModal] LoadTrip failed: user not logged in', { user });
       }
     } catch {
       setError('Failed to load trip. Please try again.')
