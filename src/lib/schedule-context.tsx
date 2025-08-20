@@ -69,8 +69,8 @@ export function ScheduleProvider({ children }: { children: ReactNode }) {
     try {
       const tripData = await loadTripDetails(tripId);
       if (!tripData) return false;
-      const allAttractions = getAttractions();
-      const attractionMap = new Map(allAttractions.map(a => [a.id, a]));
+  const allAttractions = await getAttractions();
+  const attractionMap = new Map(allAttractions.map(a => [a.id, a]));
       const enrichedDays = tripData.days.map(day => ({
         ...day,
         items: day.items.map(item => attractionMap.get(item.id) || item)

@@ -27,12 +27,12 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
     setError('')
     
     // Use authenticated user's user_id
-    if (!user?.id) {
+    if (typeof user !== 'object' || user === null || !('id' in user)) {
       setError('You must be logged in to save a trip.')
       setLoading(false)
       return
     }
-    const result = await saveTrip(user.id, tripName.trim())
+    const result = await saveTrip((user as { id: string }).id, tripName.trim())
     
     if (result.success) {
       setSuccess(true)

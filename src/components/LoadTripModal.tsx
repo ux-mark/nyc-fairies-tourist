@@ -18,9 +18,9 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
   const { user } = useAuth()
 
   React.useEffect(() => {
-    if (user?.id) {
+    if (typeof user === 'object' && user !== null && 'id' in user) {
       setLoading(true)
-      getUserTrips(user.id)
+      getUserTrips((user as { id: string }).id)
         .then(setTrips)
         .catch(() => setError('Failed to load trips.'))
         .finally(() => setLoading(false))
@@ -33,13 +33,16 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
     setLoading(true)
     setError('')
     try {
-      // loadTrip expects (user_id, tripId)
-      const success = await loadTrip(user?.id, tripId)
-      if (success) {
-        onClose()
-        resetForm()
+      if (typeof user === 'object' && user !== null && 'id' in user) {
+        const success = await loadTrip((user as { id: string }).id, tripId)
+        if (success) {
+          onClose()
+          resetForm()
+        } else {
+          setError('Failed to load trip. Please try again.')
+        }
       } else {
-        setError('Failed to load trip. Please try again.')
+        setError('You must be logged in to load your trips.')
       }
     } catch {
       setError('Failed to load trip. Please try again.')
