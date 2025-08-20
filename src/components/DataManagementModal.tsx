@@ -15,7 +15,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
   const [error, setError] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
   const { deleteUserData } = useSchedule()
-  const { user } = useAuth()
+  const { user, signOut } = useAuth()
 
   const handleDeleteData = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -30,9 +30,10 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
       const success = await deleteUserData((user as { id: string }).id)
       if (success) {
         setSuccess(true)
-        setTimeout(() => {
-          onClose()
-          resetForm()
+        setTimeout(async () => {
+          await signOut();
+          onClose();
+          resetForm();
         }, 3000)
       } else {
         setError('Failed to delete data. Please try again or contact the Fairies.')
