@@ -19,31 +19,18 @@ export interface SaveTripResult {
 }
 
 export const saveTrip = async (
-  phoneNumber: string,
+  user_id: string,
   tripName: string,
   startDate: string,
   endDate: string,
   days: ScheduleDay[]
 ): Promise<SaveTripResult> => {
   try {
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .upsert(
-        { phone_number: phoneNumber, updated_at: new Date().toISOString() },
-        { onConflict: 'phone_number' }
-      )
-      .select()
-      .single();
-
-    if (userError) {
-      console.error('User creation error:', userError);
-      return { success: false, error: 'Failed to create user record' };
-    }
-
+    // Insert trip schedule with user_id
     const { data: schedule, error: scheduleError } = await supabase
       .from('trip_schedules')
       .insert({
-        user_id: user.id,
+        user_id,
         name: tripName.trim() || 'My NYC Trip',
         start_date: startDate,
         end_date: endDate,
@@ -86,26 +73,14 @@ export const saveTrip = async (
   }
 };
 
-export const loadUserTrips = async (phoneNumber: string): Promise<SavedTrip[]> => {
+export const loadUserTrips = async (user_id: string): Promise<SavedTrip[]> => {
   try {
-    // First, look up the user by phone number
-    const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('id')
-      .eq('phone_number', phoneNumber)
-      .single();
-
-    if (userError || !user) {
-      console.error('User lookup error:', userError);
-      return [];
-    }
-
-    // Now, load trips for this user_id
+    // Load trips for this user_id
     const { data, error } = await supabase
       .from('trip_schedules')
       .select('id, name, start_date, end_date, created_at, scheduled_attractions(count)')
       .eq('is_active', true)
-      .eq('user_id', user.id)
+      .eq('user_id', user_id)
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -196,20 +171,36 @@ export const loadTripDetails = async (
   }
 };
 
-export const deleteUserData = async (phoneNumber: string): Promise<boolean> => {
+export const deleteUserData = async (user_id: string): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    // Delete all trips associated with the user id
+    const { data: tripDeleteData, error: tripError } = await supabase
+      .from('trip_schedules')
+      .delete()
+      .eq('user_id', user_id);
+
+    console.log('[deleteUserData] Trip delete result:', { tripDeleteData, tripError, userId: user_id });
+
+    if (tripError) {
+      console.error('[deleteUserData] Delete user trips error:', tripError);
+      return false;
+    }
+
+    // Delete user record
+    const { data: userDeleteData, error: userDeleteError } = await supabase
       .from('users')
       .delete()
-      .eq('phone_number', phoneNumber);
+      .eq('user_id', user_id);
 
-    if (error) {
-      console.error('Delete user data error:', error);
+    console.log('[deleteUserData] User delete result:', { userDeleteData, userDeleteError, userId: user_id });
+
+    if (userDeleteError) {
+      console.error('[deleteUserData] Delete user data error:', userDeleteError);
       return false;
     }
     return true;
   } catch (error) {
-    console.error('Delete user data error:', error);
+    console.error('[deleteUserData] Unexpected error:', error);
     return false;
   }
 };

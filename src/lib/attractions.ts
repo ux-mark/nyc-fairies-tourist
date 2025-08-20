@@ -1,30 +1,35 @@
-import attractionsData from '../data/attractions.json';
+import { supabase } from './supabase';
 
 export type Attraction = {
   id: string;
   name: string;
   category: string;
   tags?: string[];
-  priceRange?: string;
+  price_range?: string;
   duration?: string;
   location?: string;
   resources?: string[];
   notes?: string;
-  nearbyAttractions?: string[];
-  walkingDistance?: string;
-  venueSize?: string;
+  nearby_attractions?: string[];
+  walking_distance?: string;
+  venue_size?: string;
   todos?: string[];
+  created_at?: string;
 };
 
-export type AttractionsData = {
-  categories: string[];
-  attractions: Attraction[];
+
+export const getAttractions = async (): Promise<Attraction[]> => {
+  const { data, error } = await supabase
+    .from('attractions')
+    .select('*');
+  if (error) throw error;
+  return data as Attraction[];
 };
 
-export const getAttractions = (): Attraction[] => {
-  return (attractionsData as AttractionsData).attractions;
-};
-
-export const getCategories = (): string[] => {
-  return (attractionsData as AttractionsData).categories;
+export const getCategories = async (): Promise<string[]> => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('name');
+  if (error) throw error;
+  return data ? data.map((cat: { name: string }) => cat.name) : [];
 };

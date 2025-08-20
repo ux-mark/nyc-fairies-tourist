@@ -1,14 +1,31 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { getAttractions, Attraction } from "../lib/attractions";
 import AttractionCard from "./AttractionCard";
 import SearchBar from "./SearchBar";
 import CategoryFilter from "./CategoryFilter";
 
 export default function AttractionsList() {
-  const allAttractions: Attraction[] = getAttractions();
-  const [filtered, setFiltered] = useState<Attraction[]>(allAttractions);
+  const [allAttractions, setAllAttractions] = useState<Attraction[]>([]);
+  const [filtered, setFiltered] = useState<Attraction[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const data = await getAttractions();
+        setAllAttractions(data);
+        setFiltered(data);
+      } catch (err) {
+        setAllAttractions([]);
+        setFiltered([]);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
 
   const handleSearch = (query: string) => {
     const q = query.toLowerCase();
@@ -38,11 +55,15 @@ export default function AttractionsList() {
     <>
       <CategoryFilter selected={selectedCategory} onSelect={handleCategory} />
       <SearchBar onSearch={handleSearch} />
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {filtered.map((attraction: Attraction) => (
-          <AttractionCard key={attraction.id} attraction={attraction} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="text-center py-8">Loading attractions...</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {filtered.map((attraction: Attraction) => (
+            <AttractionCard key={attraction.id} attraction={attraction} />
+          ))}
+        </div>
+      )}
     </>
   );
 }

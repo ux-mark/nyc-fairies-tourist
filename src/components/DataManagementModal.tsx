@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { useSchedule } from '../lib/schedule-context'
+import { useAuth } from '../lib/auth-context'
 
 interface DataManagementModalProps {
   isOpen: boolean
@@ -8,7 +9,7 @@ interface DataManagementModalProps {
 }
 
 export default function DataManagementModal({ isOpen, onClose }: DataManagementModalProps) {
-  const [phoneNumber, setPhoneNumber] = useState('')
+  // No email state needed
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -20,9 +21,14 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
     e.preventDefault()
     setLoading(true)
     setError('')
-    
+    const { user } = useAuth()
     try {
-      const success = await deleteUserData(phoneNumber.trim())
+      if (!user?.id) {
+        setError('You must be logged in to delete your data.')
+        setLoading(false)
+        return
+      }
+      const success = await deleteUserData(user.id)
       if (success) {
         setSuccess(true)
         setTimeout(() => {
@@ -35,12 +41,11 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
     } catch {
       setError('Failed to delete data. Please try again or contact the Fairies.')
     }
-    
     setLoading(false)
   }
 
   const resetForm = () => {
-    setPhoneNumber('')
+  // No email to reset
     setConfirmDelete(false)
     setSuccess(false)
     setError('')
@@ -74,7 +79,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
               </p>
               <ul className="text-xs text-red-700 list-disc list-inside space-y-1">
                 <li>All your saved trips will be permanently deleted</li>
-                <li>Your phone number will be removed from our system</li>
+                <li>Your account will be removed from our system</li>
                 <li>You won&apos;t be able to recover this data</li>
               </ul>
             </div>
@@ -86,23 +91,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
             )}
             
             <div className="space-y-4">
-              <div>
-                <label htmlFor="delete-phone" className="block text-sm font-medium mb-1">
-                  Phone Number
-                </label>
-                <input
-                  id="delete-phone"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+1 (555) 123-4567"
-                  className="w-full px-3 py-2 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-                  required
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Enter your phone number to delete all associated data.
-                </p>
-              </div>
+              {/* Email input removed. User must be authenticated. */}
               
               <div className="flex items-center gap-2">
                 <input
@@ -130,7 +119,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
               </button>
               <button
                 type="submit"
-                disabled={loading || !phoneNumber.trim() || !confirmDelete}
+                disabled={loading || !confirmDelete}
                 className="flex-1 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
               >
                 {loading ? 'Deleting...' : 'Delete All Data'}

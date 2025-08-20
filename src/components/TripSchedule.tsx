@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import SaveTripModal from "./SaveTripModal";
 import LoadTripModal from "./LoadTripModal";
 import DataManagementModal from "./DataManagementModal";
+import AuthModal from "./AuthModal";
+import { useAuth } from "../lib/auth-context";
 import { useSchedule } from "../lib/schedule-context";
 
 export default function TripSchedule() {
@@ -19,11 +21,14 @@ export default function TripSchedule() {
     removeFromDay,
     reset,
   } = useSchedule();
+  const { user, loading } = useAuth();
 
   // Modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showLoadModal, setShowLoadModal] = useState(false);
   const [showDataModal, setShowDataModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState<null | 'save' | 'load' | 'delete'>(null);
 
   // Format date for display (client-only)
   const [formattedDays, setFormattedDays] = useState<string[]>([]);
@@ -52,6 +57,28 @@ export default function TripSchedule() {
       // Try to open the calendar popup
       endDateRef.current.click();
     }
+  };
+
+  // Auth check before actions
+  const requireAuth = (action: 'save' | 'load' | 'delete') => {
+    if (loading) return; // Wait for auth to load
+    if (!user) {
+      setPendingAction(action);
+      setShowAuthModal(true);
+    } else {
+      if (action === 'save') setShowSaveModal(true);
+      if (action === 'load') setShowLoadModal(true);
+      if (action === 'delete') setShowDataModal(true);
+    }
+  };
+
+  // After auth, continue pending action
+  const handleAuthSuccess = () => {
+    setShowAuthModal(false);
+    if (pendingAction === 'save') setShowSaveModal(true);
+    if (pendingAction === 'load') setShowLoadModal(true);
+    if (pendingAction === 'delete') setShowDataModal(true);
+    setPendingAction(null);
   };
 
   return (
@@ -83,7 +110,7 @@ export default function TripSchedule() {
           <div className="flex gap-2">
             <button
               className="flex-1 text-xs px-3 py-1 rounded bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50"
-              onClick={() => setShowSaveModal(true)}
+              onClick={() => requireAuth('save')}
               disabled={days.length === 0 || days.every(day => day.items.length === 0)}
               title={days.length === 0 ? "Set trip dates first" : "Save your current trip"}
             >
@@ -91,7 +118,7 @@ export default function TripSchedule() {
             </button>
             <button
               className="flex-1 text-xs px-3 py-1 rounded bg-muted text-muted-foreground border border-border hover:bg-primary/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-              onClick={() => setShowLoadModal(true)}
+              onClick={() => requireAuth('load')}
             >
               Load Trip
             </button>
@@ -105,7 +132,7 @@ export default function TripSchedule() {
             </button>
             <button
               className="flex-1 text-xs px-3 py-1 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
-              onClick={() => setShowDataModal(true)}
+              onClick={() => requireAuth('delete')}
             >
               Delete My Data
             </button>
@@ -153,6 +180,7 @@ export default function TripSchedule() {
       <SaveTripModal isOpen={showSaveModal} onClose={() => setShowSaveModal(false)} />
       <LoadTripModal isOpen={showLoadModal} onClose={() => setShowLoadModal(false)} />
       <DataManagementModal isOpen={showDataModal} onClose={() => setShowDataModal(false)} />
+      <AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onAuthSuccess={handleAuthSuccess} />
     </aside>
   );
 }

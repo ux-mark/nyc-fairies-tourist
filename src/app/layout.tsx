@@ -47,17 +47,20 @@ export const metadata: Metadata = {
 import React from "react";
 import Footer from "../components/Footer";
 import { ScheduleProvider } from "../lib/schedule-context";
+import { AuthProvider } from "../lib/auth-context";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <ScheduleProvider>
-          <Header />
-          {children}
-          <ClientMobileFooter />
-          <Footer />
-        </ScheduleProvider>
+        <AuthProvider>
+          <ScheduleProvider>
+            <Header />
+            {children}
+            <ClientMobileFooter />
+            <Footer />
+          </ScheduleProvider>
+        </AuthProvider>
       </body>
     </html>
   );

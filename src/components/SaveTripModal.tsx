@@ -1,6 +1,7 @@
 "use client"
 import React, { useState } from 'react'
 import { useSchedule } from '../lib/schedule-context'
+import { useAuth } from '../lib/auth-context'
 
 interface SaveTripModalProps {
   isOpen: boolean
@@ -8,11 +9,12 @@ interface SaveTripModalProps {
 }
 
 export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
-  const [phoneNumber, setPhoneNumber] = useState('')
+  // No email state needed
   const [tripName, setTripName] = useState('My NYC Trip')
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
+    const { user } = useAuth()
   
   const { saveTrip, days } = useSchedule()
 
@@ -24,14 +26,13 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
     setLoading(true)
     setError('')
     
-    // Basic validation
-    if (!phoneNumber.trim()) {
-      setError('Phone number is required')
+    // Use authenticated user's user_id
+    if (!user?.id) {
+      setError('You must be logged in to save a trip.')
       setLoading(false)
       return
     }
-    
-    const result = await saveTrip(phoneNumber.trim(), tripName.trim())
+    const result = await saveTrip(user.id, tripName.trim())
     
     if (result.success) {
       setSuccess(true)
@@ -50,7 +51,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
   const resetForm = () => {
     setSuccess(false)
     setError('')
-    setPhoneNumber('')
+  // No email to reset
     setTripName('My NYC Trip')
   }
 
@@ -72,7 +73,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
               Your trip &quot;{tripName}&quot; with {totalAttractions} attractions has been saved.
             </p>
             <p className="text-sm text-muted-foreground">
-              Use your phone number to load this trip on any device.
+              Use your email to load this trip on any device.
             </p>
           </div>
         ) : (
@@ -102,24 +103,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
                 />
               </div>
               
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium mb-1">
-                  Phone Number
-                </label>
-                <input
-                  id="phone"
-                  type="tel"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                  placeholder="+1 (555) 123-4567"
-                  className="w-full px-3 py-2 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
-                  required
-                />
-                <p className="text-xs text-muted-foreground mt-1">
-                  Used only to save and retrieve your trips. No verification required. 
-                  You can delete all your data at any time.
-                </p>
-              </div>
+              {/* Email input removed. User must be authenticated. */}
 
               <div className="bg-muted/50 p-3 rounded text-sm">
                 <strong>Trip Summary:</strong>
