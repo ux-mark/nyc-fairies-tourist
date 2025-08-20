@@ -20,3 +20,4 @@ Metro just needs a contactless credit card, or you can use Apple or Google Pay.
 
 **Taxi**
 Of course you can just fork out for a taxi if you want, I think the cab fares are capped at $70 (PLUS tolls and tips)
+
