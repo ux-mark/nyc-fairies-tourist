@@ -1,5 +1,6 @@
 
 import { supabase } from './supabase';
+import { debugLog } from './utils';
 import type { ScheduleDay } from './schedule-context';
 import type { Attraction } from './attractions';
 
@@ -27,6 +28,7 @@ export const saveTrip = async (
 ): Promise<SaveTripResult> => {
   try {
     // Insert trip schedule with user_id
+    debugLog('[saveTrip] Inserting trip schedule', { user_id, tripName, startDate, endDate });
     const { data: schedule, error: scheduleError } = await supabase
       .from('trip_schedules')
       .insert({
@@ -37,6 +39,7 @@ export const saveTrip = async (
       })
       .select()
       .single();
+    debugLog('[saveTrip] Insert result', { schedule, scheduleError });
 
     if (scheduleError) {
       console.error('Schedule creation error:', scheduleError);
@@ -53,19 +56,22 @@ export const saveTrip = async (
     );
 
     if (attractions.length > 0) {
+      debugLog('[saveTrip] Inserting scheduled attractions', attractions);
       const { error: attractionsError } = await supabase
         .from('scheduled_attractions')
         .insert(attractions);
+      debugLog('[saveTrip] Attractions insert result', { attractionsError });
       if (attractionsError) {
         console.error('Attractions save error:', attractionsError);
-        await supabase.from('trip_schedules').delete().eq('id', schedule.id);
+  debugLog('[saveTrip] Deleting failed trip schedule', schedule.id);
+  await supabase.from('trip_schedules').delete().eq('id', schedule.id);
         return { success: false, error: 'Failed to save trip attractions' };
       }
     }
 
     return { success: true, tripId: schedule.id };
   } catch (error) {
-    console.error('Save trip error:', error);
+  debugLog('[saveTrip] Exception', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',
@@ -74,6 +80,7 @@ export const saveTrip = async (
 };
 
 export const loadUserTrips = async (user_id: string): Promise<SavedTrip[]> => {
+  debugLog('[loadUserTrips] Loading trips for user', user_id);
   try {
     // Load trips for this user_id
     const { data, error } = await supabase
@@ -82,6 +89,7 @@ export const loadUserTrips = async (user_id: string): Promise<SavedTrip[]> => {
       .eq('is_active', true)
       .eq('user_id', user_id)
       .order('created_at', { ascending: false });
+  debugLog('[loadUserTrips] Query result', { data, error });
 
     if (error) {
       console.error('Load trips error:', error);
@@ -100,7 +108,7 @@ export const loadUserTrips = async (user_id: string): Promise<SavedTrip[]> => {
           : 0,
     }));
   } catch (error) {
-    console.error('Load user trips error:', error);
+  debugLog('[loadUserTrips] Exception', error);
     return [];
   }
 };
@@ -112,6 +120,7 @@ export const loadTripDetails = async (
   attractions: Attraction[];
   days: ScheduleDay[];
 } | null> => {
+  debugLog('[loadTripDetails] Loading trip details', tripId);
   try {
     const { data: schedule, error: scheduleError } = await supabase
       .from('trip_schedules')
@@ -119,6 +128,7 @@ export const loadTripDetails = async (
       .eq('id', tripId)
       .eq('is_active', true)
       .single();
+  debugLog('[loadTripDetails] Schedule query result', { schedule, scheduleError });
 
     if (scheduleError || !schedule) {
       console.error('Schedule load error:', scheduleError);
@@ -130,6 +140,7 @@ export const loadTripDetails = async (
       .select('*')
       .eq('schedule_id', tripId)
       .order('day_date', { ascending: true });
+  debugLog('[loadTripDetails] Attractions query result', { attractions, attractionsError });
 
     if (attractionsError) {
       console.error('Attractions load error:', attractionsError);
@@ -166,18 +177,20 @@ export const loadTripDetails = async (
 
     return { schedule, attractions: attractions || [], days };
   } catch (error) {
-    console.error('Load trip details error:', error);
+  debugLog('[loadTripDetails] Exception', error);
     return null;
   }
 };
 
 export const deleteUserData = async (user_id: string): Promise<boolean> => {
+  debugLog('[deleteUserData] Deleting all user data', user_id);
   try {
     // Delete all trips associated with the user id
     const { data: tripDeleteData, error: tripError } = await supabase
       .from('trip_schedules')
       .delete()
       .eq('user_id', user_id);
+  debugLog('[deleteUserData] Trip delete result', { tripDeleteData, tripError });
 
     console.log('[deleteUserData] Trip delete result:', { tripDeleteData, tripError, userId: user_id });
 
@@ -191,6 +204,7 @@ export const deleteUserData = async (user_id: string): Promise<boolean> => {
       .from('users')
       .delete()
       .eq('user_id', user_id);
+  debugLog('[deleteUserData] User delete result', { userDeleteData, userDeleteError });
 
     console.log('[deleteUserData] User delete result:', { userDeleteData, userDeleteError, userId: user_id });
 
@@ -200,7 +214,7 @@ export const deleteUserData = async (user_id: string): Promise<boolean> => {
     }
     return true;
   } catch (error) {
-    console.error('[deleteUserData] Unexpected error:', error);
+  debugLog('[deleteUserData] Exception', error);
     return false;
   }
 };
@@ -208,11 +222,13 @@ export const deleteUserData = async (user_id: string): Promise<boolean> => {
 export const deleteTripById = async (
   tripId: string
 ): Promise<boolean> => {
+  debugLog('[deleteTripById] Deleting trip by id', tripId);
   try {
     const { error } = await supabase
       .from('trip_schedules')
       .update({ is_active: false })
       .eq('id', tripId);
+  debugLog('[deleteTripById] Update result', { error });
 
     if (error) {
       console.error('Delete trip error:', error);
@@ -220,7 +236,7 @@ export const deleteTripById = async (
     }
     return true;
   } catch (error) {
-    console.error('Delete trip error:', error);
+  debugLog('[deleteTripById] Exception', error);
     return false;
   }
 };
