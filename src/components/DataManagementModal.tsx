@@ -22,12 +22,12 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
     setLoading(true)
     setError('')
     try {
-      if (!user?.id) {
+      if (!user || typeof user !== 'object' || !('id' in user)) {
         setError('You must be logged in to delete your data.')
         setLoading(false)
         return
       }
-      const success = await deleteUserData(user.id)
+      const success = await deleteUserData((user as { id: string }).id)
       if (success) {
         setSuccess(true)
         setTimeout(() => {
