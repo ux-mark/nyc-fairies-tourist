@@ -26,8 +26,12 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
         setSuccess(true);
         if (onAuthSuccess) onAuthSuccess();
       }
-    } catch (err: any) {
-      setError(err.message || 'Failed to send magic link.');
+    } catch (err: unknown) {
+      if (typeof err === 'object' && err !== null && 'message' in err) {
+        setError((err as { message?: string }).message || 'Failed to send magic link.');
+      } else {
+        setError('Failed to send magic link.');
+      }
     }
     setLoading(false);
   };

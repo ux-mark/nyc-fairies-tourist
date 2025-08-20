@@ -14,14 +14,13 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [confirmDelete, setConfirmDelete] = useState(false)
-  
   const { deleteUserData } = useSchedule()
+  const { user } = useAuth()
 
   const handleDeleteData = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const { user } = useAuth()
     try {
       if (!user?.id) {
         setError('You must be logged in to delete your data.')
