@@ -18,17 +18,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const ensureUserInDatabase = async (user: User) => {
     if (!user || !user.id) return;
     debugLog('[AuthProvider] Ensuring user exists in DB', user.id);
-    const { data } = await supabase
+    const { data, error: selectError } = await supabase
       .from('users')
       .select('user_id')
       .eq('user_id', user.id)
       .single();
+    if (selectError && selectError.code !== 'PGRST116') {
+      debugLog('[AuthProvider] User select error', selectError);
+      return;
+    }
     if (!data) {
       debugLog('[AuthProvider] Creating user in DB', user.id);
-      const { error: insertError } = await supabase
+      const { error: insertError, status } = await supabase
         .from('users')
         .insert({ user_id: user.id, email: user.email });
-      if (insertError) debugLog('[AuthProvider] User insert error', insertError);
+      if (insertError && status !== 409) {
+        debugLog('[AuthProvider] User insert error', insertError);
+      } else if (status === 409) {
+        debugLog('[AuthProvider] User already exists (409)', user.id);
+      }
     }
   };
   const [user, setUser] = useState<unknown>(null);
