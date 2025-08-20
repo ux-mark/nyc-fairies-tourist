@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { supabase } from '../lib/supabase';
 
 interface AuthModalProps {
@@ -36,10 +37,25 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
     setLoading(false);
   };
 
-  if (!isOpen) return null;
+  const [modalRoot, setModalRoot] = useState<Element | null>(null);
 
-  return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+  useEffect(() => {
+    let root = document.getElementById('modal-root');
+    if (!root) {
+      root = document.createElement('div');
+      root.setAttribute('id', 'modal-root');
+      document.body.appendChild(root);
+    }
+    setModalRoot(root);
+    return () => {
+      // Optionally clean up
+    };
+  }, []);
+
+  if (!isOpen || !modalRoot) return null;
+
+  return createPortal(
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 text-black">
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         <h3 className="text-lg font-bold mb-4">Sign In</h3>
         {success ? (
@@ -50,7 +66,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
         ) : (
           <form onSubmit={handleSignIn} className="space-y-4">
             <div>
-              <label htmlFor="auth-email" className="block text-sm font-medium mb-1">
+              <label htmlFor="auth-email" className="block text-sm font-medium mb-1 text-neutral-800">
                 Email Address
               </label>
               <input
@@ -59,16 +75,16 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="me@thefairies.ie"
-                className="w-full px-3 py-2 rounded border border-border bg-muted text-foreground focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                className="w-full px-3 py-2 rounded border border-border bg-muted text-neutral-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                 required
               />
             </div>
-            {error && <div className="text-red-600 text-sm">{error}</div>}
+            <p className="text-neutral-800 text-sm mb-2">No pesky passwords – just magic links!</p>
             <div className="flex gap-2 mt-6">
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-4 py-2 rounded bg-muted text-foreground hover:bg-muted/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+                className="flex-1 px-4 py-2 rounded bg-muted text-neutral-800 hover:bg-muted/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
                 disabled={loading}
               >
                 Cancel
@@ -84,6 +100,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
           </form>
         )}
       </div>
-    </div>
+    </div>,
+    modalRoot
   );
 }

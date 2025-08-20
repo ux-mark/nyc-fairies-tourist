@@ -16,7 +16,7 @@ export default function AttractionCard({ attraction }: { attraction: Attraction 
         <span className="inline-block w-2 h-2 rounded-full bg-primary" />
         <h2 className="text-lg font-bold tracking-tight">{attraction.name}</h2>
       </div>
-      <div className="text-xs font-semibold text-accent mb-2">{attraction.category}</div>
+      <div className="text-xs font-semibold text-muted-foreground mb-2">{attraction.category}</div>
       {attraction.tags && (
         <div className="flex flex-wrap gap-1 mb-2">
           {attraction.tags.map((tag) => (
