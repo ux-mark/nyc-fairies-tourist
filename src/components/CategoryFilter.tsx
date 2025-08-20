@@ -12,7 +12,7 @@ export default function CategoryFilter({ selected, onSelect }: { selected: strin
         const cats = await getCategories();
         setCategories(cats);
       } catch (err) {
-        setCategories([]);
+          setCategories([]); // Handle error
       } finally {
         setLoading(false);
       }

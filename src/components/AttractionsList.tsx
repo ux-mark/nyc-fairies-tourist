@@ -19,8 +19,8 @@ export default function AttractionsList() {
         setAllAttractions(data);
         setFiltered(data);
       } catch (err) {
-        setAllAttractions([]);
-        setFiltered([]);
+          setAllAttractions([]);
+          setFiltered([]);
       } finally {
         setLoading(false);
       }

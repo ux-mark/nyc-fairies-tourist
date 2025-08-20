@@ -27,7 +27,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
     } else {
       setError('You must be logged in to load your trips.')
     }
-  }, [user])
+  }, [user, getUserTrips])
 
   const handleLoadTrip = async (tripId: string) => {
     setLoading(true)
