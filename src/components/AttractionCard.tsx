@@ -25,7 +25,7 @@ export default function AttractionCard({ attraction }: { attraction: Attraction 
         </div>
       )}
       <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mb-2">
-        {attraction.priceRange && <span>💲 {attraction.priceRange}</span>}
+         {attraction.price_range && <span>💲 {attraction.price_range}</span>}
         {attraction.duration && <span>⏱ {attraction.duration}</span>}
         {attraction.location && <span>📍 {attraction.location}</span>}
       </div>
