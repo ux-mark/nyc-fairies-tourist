@@ -21,11 +21,21 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
   const { getUserTrips, loadTrip } = useSchedule()
   const { user } = useAuth()
 
+  // Helper to get user id
+  const getUserId = (user: unknown) => {
+    if (user && typeof user === 'object' && user !== null) {
+      const u = user as { id?: string; user_id?: string };
+      return u.id || u.user_id || null;
+    }
+    return null;
+  };
+
   React.useEffect(() => {
-    if (typeof user === 'object' && user !== null && 'id' in user) {
+    const userId = getUserId(user);
+    if (userId) {
       debugLog('[LoadTripModal] Attempting to load trips', { user });
       setLoading(true);
-      getUserTrips((user as { id: string }).id)
+      getUserTrips(userId)
         .then((trips) => {
           setTrips(trips);
           debugLog('[LoadTripModal] Loaded trips', trips);
@@ -46,8 +56,9 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
     setError('')
     debugLog('[LoadTripModal] Attempting to load trip', { user, tripId });
     try {
-      if (typeof user === 'object' && user !== null && 'id' in user) {
-        const success = await loadTrip((user as { id: string }).id, tripId)
+      const userId = getUserId(user);
+      if (userId) {
+        const success = await loadTrip(userId, tripId)
         if (success) {
           onClose()
           resetForm()
