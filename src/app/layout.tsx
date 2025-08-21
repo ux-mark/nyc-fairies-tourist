@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Header from "../components/Header";
-import ClientMobileFooter from "../components/ClientMobileFooter";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,11 +17,11 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!",
   description: "Browse NYC attractions, filter by category, and build a day-by-day schedule.",
-  metadataBase: new URL("https://nyc-tourist-info.example.com"),
+  metadataBase: new URL("https://visit.thefairies.ie"),
   openGraph: {
     title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!",
     description: "Browse NYC attractions, filter by category, and build a day-by-day schedule.",
-    url: "https://nyc-tourist-info.example.com",
+    url: "https://visit.thefairies.ie",
     siteName: "NYC Tourist Info",
     images: [
       {
@@ -57,10 +57,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <ScheduleProvider>
             <Header />
             {children}
-            <ClientMobileFooter />
             <Footer />
           </ScheduleProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );

@@ -11,28 +11,22 @@ interface AuthModalProps {
 export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setError('');
-    setSuccess(false);
+  setLoading(true);
+  setSuccess(false);
     try {
       const { error: signInError } = await supabase.auth.signInWithOtp({ email });
       if (signInError) {
-        setError(signInError.message);
+        // Optionally handle error (e.g., show a toast or set a local error state)
       } else {
         setSuccess(true);
         if (onAuthSuccess) onAuthSuccess();
       }
-    } catch (err: unknown) {
-      if (typeof err === 'object' && err !== null && 'message' in err) {
-        setError((err as { message?: string }).message || 'Failed to send magic link.');
-      } else {
-        setError('Failed to send magic link.');
-      }
+    } catch {
+      // Optionally handle error (e.g., show a toast or set a local error state)
     }
     setLoading(false);
   };

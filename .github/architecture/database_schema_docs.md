@@ -1,14 +1,14 @@
 # Supabase Database Schema: NYC Tourist App
 
 ## Overview
-This database supports a NYC trip planning application where users can browse attractions, create trip schedules, and save their itineraries using just a phone number for identification.
+This database supports a NYC trip planning application with community-driven content where users can browse attractions, contribute their own discoveries, create trip schedules, and save their itineraries. The system uses email-based authentication with role-based permissions for user-generated content moderation.
 
 ## Table Structure
 
 ### Core Data Tables
 
 #### `attractions`
-**Purpose**: Stores detailed information about NYC tourist attractions and activities.
+**Purpose**: Stores detailed information about NYC tourist attractions and activities, including both admin-curated and user-submitted content.
 
 ```sql
 CREATE TABLE attractions (
@@ -25,9 +25,18 @@ CREATE TABLE attractions (
   walking_distance TEXT,                 -- Distance to nearby attractions
   venue_size TEXT,                      -- Capacity or size information
   todos TEXT[],                         -- Internal notes for data completion
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  created_by UUID REFERENCES users(user_id), -- User who created this attraction
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved')), -- Approval status
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 ```
+
+**Key Design Decisions:**
+- `created_by` references `users.user_id` (not `users.id` - see Users table structure)
+- `status` defaults to 'pending' for new user submissions
+- No 'rejected' status - rejected items are deleted
+- Existing attractions were migrated to 'approved' status
 
 #### `categories`
 **Purpose**: Stores attraction categories for filtering and organization.
@@ -40,119 +49,258 @@ CREATE TABLE categories (
 );
 ```
 
+**Pre-populated Categories:**
+- Entertainment & Shows
+- Museums & Culture  
+- Free & Low-Cost Attractions
+- Observation Decks & Views
+- Walking Tours & Neighborhoods
+- Outer Borough Adventures
+- Shopping
+- Memorial & Historic Sites
+- Food Experiences
+- Transportation/Sightseeing
+
 ### User Management Tables
 
 #### `users`
-| Column        | Type      | Constraints                | Description                       |
-|--------------|-----------|----------------------------|-----------------------------------|
-| id           | UUID      | PK, default uuid_generate_v4() | Unique user ID                    |
-| phone_number | TEXT      | UNIQUE, NOT NULL           | User's phone number (identifier)  |
-| created_at   | TIMESTAMPTZ | default NOW()             | Record creation timestamp         |
-| updated_at   | TIMESTAMPTZ | default NOW()             | Last update timestamp             |
+**Purpose**: Stores user profiles and roles, linked to Supabase Auth users.
+
+| Column     | Type        | Constraints                    | Description                       |
+|------------|-------------|--------------------------------|-----------------------------------|
+| user_id    | UUID        | PK, REFERENCES auth.users(id)  | Supabase auth user ID            |
+| email      | TEXT        | NOT NULL                       | User's email address             |
+| role       | TEXT        | DEFAULT 'user', CHECK role IN ('user', 'admin') | User permission level |
+| created_at | TIMESTAMPTZ | DEFAULT NOW()                  | Record creation timestamp         |
+| updated_at | TIMESTAMPTZ | DEFAULT NOW()                  | Last update timestamp            |
+
+**Important Note**: This table does NOT have an `id` column. The `user_id` column serves as the primary key and directly references Supabase's `auth.users(id)`.
+
+**Admin User**: `who@thefairies.ie` has role = 'admin'
 
 #### `trip_schedules`
-| Column      | Type      | Constraints                | Description                       |
-|-------------|-----------|----------------------------|-----------------------------------|
-| id          | UUID      | PK, default uuid_generate_v4() | Unique trip schedule ID           |
-| user_id     | UUID      | FK → users(id), ON DELETE CASCADE | User who owns the trip           |
-| name        | TEXT      | NOT NULL, default 'My NYC Trip' | Trip name                        |
-| start_date  | DATE      |                            | Trip start date                   |
-| end_date    | DATE      |                            | Trip end date                     |
-| is_active   | BOOLEAN   | default true               | Soft delete flag                  |
-| created_at  | TIMESTAMPTZ | default NOW()             | Record creation timestamp         |
-| updated_at  | TIMESTAMPTZ | default NOW()             | Last update timestamp             |
+**Purpose**: Stores user trip itineraries.
+
+| Column      | Type        | Constraints                    | Description                       |
+|-------------|-------------|--------------------------------|-----------------------------------|
+| id          | UUID        | PK, default uuid_generate_v4() | Unique trip schedule ID           |
+| user_id     | UUID        | FK → users(user_id), ON DELETE CASCADE | User who owns the trip       |
+| name        | TEXT        | NOT NULL, default 'My NYC Trip' | Trip name                        |
+| start_date  | DATE        |                                | Trip start date                   |
+| end_date    | DATE        |                                | Trip end date                     |
+| is_active   | BOOLEAN     | default true                   | Soft delete flag                  |
+| created_at  | TIMESTAMPTZ | default NOW()                  | Record creation timestamp         |
+| updated_at  | TIMESTAMPTZ | default NOW()                  | Last update timestamp            |
 
 #### `scheduled_attractions`
-| Column          | Type      | Constraints                | Description                       |
-|-----------------|-----------|----------------------------|-----------------------------------|
-| id              | UUID      | PK, default uuid_generate_v4() | Unique attraction assignment ID   |
-| schedule_id     | UUID      | FK → trip_schedules(id), ON DELETE CASCADE | Linked trip schedule         |
-| attraction_id   | TEXT      | NOT NULL                   | Attraction ID (from attractions table) |
-| attraction_name | TEXT      | NOT NULL                   | Cached attraction name            |
-| day_date        | DATE      | NOT NULL                   | Date of visit                     |
-| added_at        | TIMESTAMPTZ | default NOW()             | When added to schedule            |
+**Purpose**: Links attractions to specific days in trip schedules.
+
+| Column          | Type        | Constraints                    | Description                       |
+|-----------------|-------------|--------------------------------|-----------------------------------|
+| id              | UUID        | PK, default uuid_generate_v4() | Unique attraction assignment ID   |
+| schedule_id     | UUID        | FK → trip_schedules(id), ON DELETE CASCADE | Linked trip schedule    |
+| attraction_id   | TEXT        | NOT NULL                       | Attraction ID (from attractions table) |
+| attraction_name | TEXT        | NOT NULL                       | Cached attraction name            |
+| day_date        | DATE        | NOT NULL                       | Date of visit                     |
+| added_at        | TIMESTAMPTZ | default NOW()                  | When added to schedule            |
+
+## Content Visibility & Permissions
+
+### Attraction Visibility Rules
+1. **Public (Not Logged In)**: Only approved attractions visible
+2. **Logged-In Users**: Approved attractions + their own pending submissions
+3. **Admins**: All attractions (pending and approved)
+
+### User Permissions
+| Action | Regular User | Admin |
+|--------|-------------|-------|
+| View approved attractions | ✅ | ✅ |
+| View own pending attractions | ✅ | ✅ |
+| View others' pending attractions | ❌ | ✅ |
+| Create new attraction | ✅ (pending status) | ✅ (any status) |
+| Edit own attractions | ✅ | ✅ |
+| Edit others' attractions | ❌ | ✅ |
+| Approve attractions | ❌ | ✅ |
+| Delete any attraction | ❌ | ✅ |
+| Delete own pending attractions | ✅ | ✅ |
 
 ## Relationships
 
 ### Visual Summary
 ```
-users (1) ────< trip_schedules (many) ────< scheduled_attractions (many)
-                                      ╲
-                                       ╲── references attractions(id)
+auth.users (Supabase) ──┐
+                        │
+users (user_id) ────────┘
+    │
+    ├── trip_schedules (many) ────< scheduled_attractions (many)
+    │                           ╲
+    │                            ╲── references attractions(id)
+    └── attractions (many, via created_by)
 ```
 
 ### Detailed Relationships
+- **auth.users** → **users**: One-to-one via `users.user_id`
 - **users** → **trip_schedules**: One-to-many via `trip_schedules.user_id`
+- **users** → **attractions**: One-to-many via `attractions.created_by`
 - **trip_schedules** → **scheduled_attractions**: One-to-many via `scheduled_attractions.schedule_id`
 - **attractions** → **scheduled_attractions**: Referenced via `scheduled_attractions.attraction_id` (soft reference)
 
-## Data Flow Example
+## Row Level Security (RLS) Policies
 
-### User saves a trip:
-1. If phone number is new, create user record in `users`
-2. Create trip schedule in `trip_schedules` linked to user via `user_id`
-3. Each attraction added to trip is saved in `scheduled_attractions` linked via `schedule_id`
+### Users Table
+```sql
+-- Users can only access their own records
+CREATE POLICY "Users can read own record" ON users 
+FOR SELECT USING (user_id = auth.uid());
 
-### User loads trips:
-1. Find user by phone number in `users`
-2. Load all trip schedules for that user from `trip_schedules`
-3. For each trip schedule, load all scheduled attractions from `scheduled_attractions`
+CREATE POLICY "Users can update own record" ON users 
+FOR UPDATE USING (user_id = auth.uid());
 
-## Security Configuration
+CREATE POLICY "Anyone can insert user record" ON users 
+FOR INSERT WITH CHECK (user_id = auth.uid());
+```
 
-### Row Level Security (RLS) Policies
-Currently configured with permissive policies for MVP/testing:
+### Attractions Table
+```sql
+-- Public access to approved content
+CREATE POLICY "Approved attractions visible to all" ON attractions 
+FOR SELECT USING (status = 'approved');
 
-#### All Tables
-- **Allow insert for all**: Anyone can create records
-- **Allow select for all**: Anyone can read records  
-- **Allow update for all**: Anyone can update records (users table)
+-- Users see their own pending submissions
+CREATE POLICY "Users see own pending attractions" ON attractions 
+FOR SELECT USING (
+  status = 'pending' AND created_by = auth.uid()
+);
+
+-- Admins see everything
+CREATE POLICY "Admins see all attractions" ON attractions 
+FOR SELECT USING (
+  EXISTS (SELECT 1 FROM users WHERE user_id = auth.uid() AND role = 'admin')
+);
+
+-- Content creation and modification
+CREATE POLICY "Users can insert own attractions" ON attractions 
+FOR INSERT WITH CHECK (created_by = auth.uid());
+
+CREATE POLICY "Users can update own attractions" ON attractions 
+FOR UPDATE USING (created_by = auth.uid());
+
+CREATE POLICY "Admins can update any attraction" ON attractions 
+FOR UPDATE USING (
+  EXISTS (SELECT 1 FROM users WHERE user_id = auth.uid() AND role = 'admin')
+);
+
+-- Deletion permissions
+CREATE POLICY "Admins can delete any attraction" ON attractions 
+FOR DELETE USING (
+  EXISTS (SELECT 1 FROM users WHERE user_id = auth.uid() AND role = 'admin')
+);
+
+CREATE POLICY "Users can delete own pending attractions" ON attractions 
+FOR DELETE USING (
+  status = 'pending' AND created_by = auth.uid()
+);
+```
+
+### Trip Management Tables
+```sql
+-- Trip schedules: users access their own trips
+CREATE POLICY "Users can access own trips" ON trip_schedules 
+FOR ALL USING (
+  EXISTS (SELECT 1 FROM users WHERE user_id = user_id AND users.user_id = auth.uid())
+);
+
+-- Scheduled attractions: access through trip ownership
+CREATE POLICY "Users can access own scheduled attractions" ON scheduled_attractions 
+FOR ALL USING (
+  EXISTS (
+    SELECT 1 FROM trip_schedules ts 
+    JOIN users u ON ts.user_id = u.user_id 
+    WHERE ts.id = schedule_id AND u.user_id = auth.uid()
+  )
+);
+```
 
 ## Performance Indexes
 
 ### Current Indexes
-- `users(phone_number)` - User lookup by phone
-- `trip_schedules(user_id)` - Trip schedules by user
-- `scheduled_attractions(schedule_id)` - Attractions by trip
-- `scheduled_attractions(day_date)` - Attractions by date
-- `attractions(tags)` - GIN index for fast tag searches
+```sql
+-- User lookups
+CREATE INDEX idx_users_role ON users(role);
+
+-- Attraction queries
+CREATE INDEX idx_attractions_created_by ON attractions(created_by);
+CREATE INDEX idx_attractions_status ON attractions(status);
+CREATE INDEX idx_attractions_tags ON attractions USING GIN(tags);
+
+-- Trip management
+CREATE INDEX idx_trip_schedules_user_id ON trip_schedules(user_id);
+CREATE INDEX idx_scheduled_attractions_schedule_id ON scheduled_attractions(schedule_id);
+CREATE INDEX idx_scheduled_attractions_day_date ON scheduled_attractions(day_date);
+```
+
+## Data Flow Examples
+
+### User Submits New Attraction
+1. User fills out attraction form in UI
+2. `createAttraction()` inserts record with `created_by = auth.uid()` and `status = 'pending'`
+3. Attraction appears in user's "My Attractions" dashboard
+4. Admin sees attraction with yellow border (pending status)
+5. Admin clicks "Approve" → `status` changes to 'approved'
+6. Attraction becomes visible to all users
+
+### User Creates Trip Schedule
+1. User selects date range in trip planner
+2. `trip_schedules` record created with `user_id = users.user_id` where `users.user_id = auth.uid()`
+3. User adds attractions to specific days
+4. Each addition creates `scheduled_attractions` record linking `schedule_id` to `attraction_id`
+
+### Admin Content Moderation
+1. Admin views attractions list (sees all attractions via RLS policy)
+2. Visual indicators show status: green borders (approved), yellow borders (pending)
+3. Admin clicks approve/edit/delete based on content quality
+4. Changes are immediately reflected due to RLS policy updates
 
 ## TypeScript Integration
 
 ```typescript
-// Database schema interfaces
-interface AttractionResource {
-  text: string;
-  url: string;
-}
-
-interface Attraction {
-  id: string;
-  name: string;
-  category: string;
-  tags?: string[];
-  price_range?: string;
-  duration?: string;
-  location?: string;
-  resources?: AttractionResource[];
-  notes?: string;
-  nearby_attractions?: string[];
-  walking_distance?: string;
-  venue_size?: string;
-  todos?: string[];
-  created_at?: string;
-}
-
+// Core interfaces matching database schema
 interface User {
-  id: string;
-  phone_number: string;
+  user_id: string;      // Supabase auth UUID
+  email: string;
+  role: 'user' | 'admin';
   created_at: string;
   updated_at: string;
 }
 
+interface Attraction {
+  id: string;                    // Unique slug
+  name: string;                  // Required
+  category: string;              // Required, from categories table
+  tags?: string[];               // Optional array
+  price_range?: string;          // Optional price info
+  duration?: string;             // Optional time estimate
+  location: string;              // Required location
+  resources?: AttractionResource[]; // Optional links with text/url
+  notes?: string;                // Optional description
+  nearby_attractions?: string[]; // Optional related attractions
+  walking_distance?: string;     // Optional distance info
+  venue_size?: string;           // Optional capacity info
+  todos?: string[];              // Optional admin notes
+  created_by?: string;           // UUID of creating user
+  status: 'pending' | 'approved'; // Approval status
+  created_at?: string;           // Auto-generated timestamp
+  updated_at?: string;           // Auto-generated timestamp
+}
+
+interface AttractionResource {
+  text: string;  // Display text for link
+  url: string;   // URL destination
+}
+
 interface TripSchedule {
   id: string;
-  user_id: string;
+  user_id: string;     // References users.user_id
   name: string;
   start_date?: string;
   end_date?: string;
@@ -171,18 +319,61 @@ interface ScheduledAttraction {
 }
 ```
 
-## Recommendations for Improvements
+## Security Considerations
 
-### Critical for Production
-1. **Tighten RLS Policies**: Current policies allow global access. For production, implement user-specific policies:
-   ```sql
-   -- Example: Users can only access their own data
-   CREATE POLICY "Users can only access own trips" ON trip_schedules 
-   FOR ALL USING (user_id = auth.uid());
-   ```
+### Authentication Flow
+1. Users authenticate via Supabase Auth (email magic links)
+2. User record created in `users` table with `user_id = auth.uid()`
+3. All database operations use `auth.uid()` for permission checking
+4. RLS policies automatically enforce user-specific data access
 
-2. **Add Phone Number Validation**: Consider adding a check constraint for phone number format to ensure data consistency.
+### Content Security
+- **No unauthenticated content creation**: Users must be logged in to submit attractions
+- **Pending by default**: User submissions require admin approval
+- **Owner-only editing**: Users can only modify their own submissions
+- **Admin oversight**: Full admin access for quality control
+- **No data leakage**: RLS ensures users only see appropriate content
 
-### Enhancements Required
-1. **Add Attraction Foreign Key**: If you want referential integrity between `scheduled_attractions.attraction_id` and `attractions.id`, add a foreign key constraint. 
-To prevent issues we need to add an ability fo rusers to be able to add attractions. 
+### Data Integrity
+- **Foreign key constraints**: Ensure referential integrity between tables
+- **Check constraints**: Validate enum values (user roles, attraction status)
+- **Required fields**: Database enforces critical data requirements
+- **Unique constraints**: Prevent duplicate categories and emails
+
+## Migration History
+
+### Recent Changes (Current Implementation)
+1. **Added user roles**: `users.role` column with 'user'/'admin' values
+2. **Added attraction ownership**: `attractions.created_by` references users
+3. **Added approval workflow**: `attractions.status` with 'pending'/'approved' states
+4. **Updated RLS policies**: Comprehensive permission system for user-generated content
+5. **Added performance indexes**: Optimized queries for common access patterns
+6. **Set admin user**: `who@thefairies.ie` configured as admin
+
+### Database Schema Evolution
+- **Phase 1**: Basic attractions catalog with static data
+- **Phase 2**: User authentication and trip planning
+- **Phase 3**: Community contributions and content moderation (current)
+- **Phase 4**: Future enhancements (image uploads, reviews, etc.)
+
+## Recommendations for Future Development
+
+### Immediate Optimizations
+1. **Add email notifications**: Alert admin when new attractions are submitted
+2. **Implement soft deletes**: Track deleted attractions for audit purposes
+3. **Add submission timestamps**: Better tracking of content creation flow
+
+### Potential Enhancements
+1. **Image uploads**: Allow photos for user-submitted attractions
+2. **User reviews**: Rating and review system for attractions
+3. **Moderation notes**: Track why content was approved/rejected
+4. **Bulk operations**: Admin tools for managing multiple submissions
+5. **Content versioning**: Track changes to attraction details over time
+
+### Scalability Considerations
+1. **Caching layer**: For frequently accessed approved attractions
+2. **Search optimization**: Full-text search across attraction content
+3. **API rate limiting**: Prevent abuse of content submission
+4. **Content archival**: Long-term storage strategy for inactive data
+
+This schema successfully balances user empowerment with content quality, providing a foundation for sustainable community-driven growth while maintaining administrative control and data security.

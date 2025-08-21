@@ -1,6 +1,5 @@
 import React from "react";
 import ColourShowcase from "./ColourShowcase";
-import ColourTest from "./ColourTest";
 
 export default function AboutSection() {
   return (
@@ -21,7 +20,6 @@ export default function AboutSection() {
         </p>
       </section>
       
-      <ColourTest />
       <ColourShowcase />
     </div>
   );
