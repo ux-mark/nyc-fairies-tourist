@@ -2,12 +2,19 @@
 "use client";
 import React, { useState } from "react";
 import Link from 'next/link';
+import { usePathname } from "next/navigation";
 import { useAuth } from "../lib/auth-context";
 import AuthModal from "./AuthModal";
 
-export default function Header() {
-	const { user, loading, signOut } = useAuth();
-	const [showAuthModal, setShowAuthModal] = useState(false);
+	export default function Header() {
+		const { user, loading, signOut } = useAuth();
+		const [showAuthModal, setShowAuthModal] = useState(false);
+		const pathname = usePathname();
+		const navItems = [
+			{ name: "Attractions", href: "/" },
+			{ name: "Before NYC", href: "/pre-departure" },
+			{ name: "Getting here", href: "/jfk-to-manhattan" },
+		];
 
 		return (
 			<header role="banner" className="w-full py-6 px-4 bg-primary text-primary-foreground shadow-md flex flex-col sticky top-0 z-20">
@@ -18,12 +25,25 @@ export default function Header() {
 				{/* Navigation bar */}
 				<nav aria-label="Main navigation" className="mb-2">
 					<ul className="flex gap-6 text-base font-medium">
-						<li>
-							<Link href="/" className="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Attractions</Link>
-						</li>
-						<li>
-							<a href="/jfk-to-manhattan" className="hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary">Getting here</a>
-						</li>
+						{navItems.map((item) => {
+							const isActive = pathname === item.href || (item.href === "/" && pathname === "/");
+							return (
+								<li key={item.name}>
+									<Link
+										href={item.href}
+															className={
+																`focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary px-2 py-1 rounded-md ` +
+																(isActive
+																	? "bg-accent text-accent-foreground shadow-sm"
+																	: "hover:underline text-primary-foreground hover:bg-accent/30")
+															}
+										aria-current={isActive ? "page" : undefined}
+									>
+										{item.name}
+									</Link>
+								</li>
+							);
+						})}
 					</ul>
 				</nav>
 				<div className="flex items-center gap-3 ml-auto">
@@ -51,4 +71,4 @@ export default function Header() {
 				<AuthModal isOpen={showAuthModal} onClose={() => setShowAuthModal(false)} onAuthSuccess={() => setShowAuthModal(false)} />
 			</header>
 		);
-}
+	}

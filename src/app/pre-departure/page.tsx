@@ -27,8 +27,7 @@ export default function PreDeparturePage() {
           <DocumentationChecklist />
         </div>
         <div className="mt-8 text-sm text-gray-500">
-          <p>Let us know if you need the Fairies&apos; address.</p>
-          <p className="mt-2">Always check official .gov websites for latest requirements. Visa/immigration laws can change without notice. Mobile plan prices and availability subject to change. This guide is for informational purposes only.</p>
+          <p className="mt-2">⚠️ Always check official .gov websites for latest requirements. Visa/immigration laws can change without notice. Mobile plan prices and availability subject to change. This guide is for informational purposes only and mostly made with AI.</p>
         </div>
       </section>
     </main>
