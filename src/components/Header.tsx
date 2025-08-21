@@ -20,7 +20,7 @@ import AuthModal from "./AuthModal";
 			<header role="banner" className="w-full py-6 px-4 bg-primary text-primary-foreground shadow-md flex flex-col sticky top-0 z-20">
 				<div className="flex items-center gap-2 flex-1 mb-2">
 					<span className="inline-block w-6 h-6 rounded-full bg-accent" aria-hidden="true" />
-					<h1 className="text-xl font-bold tracking-tight">NYC with The Fairies</h1>
+					<h1 className="text-xl font-bold tracking-tight">Visit the  Fairies in NYC! 🧚‍♀️🗽🧚 </h1>
 				</div>
 				{/* Navigation bar */}
 				<nav aria-label="Main navigation" className="mb-2">

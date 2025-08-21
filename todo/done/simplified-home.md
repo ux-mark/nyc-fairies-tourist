@@ -66,7 +66,7 @@ Resulting structure (conceptual):
   - Remove nav links and scroll spy logic entirely.
   - Keep a compact left-aligned brand block only:
     - Black/near-black background (use existing `bg-primary text-primary-foreground` if your theme maps to black/white), no large shadows.
-    - Title: “NYC with The Fairies” (or your exact desired title from the mock).
+    - Title: “Visit the  Fairies in NYC! 🧚‍♀️🗽🧚 ” (or your exact desired title from the mock).
     - Optional small circular dot icon left of the text.
   - Ensure semantic `<header role="banner">` and tab-focus visible.
 

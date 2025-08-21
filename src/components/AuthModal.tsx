@@ -20,9 +20,9 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
     setError('');
     setSuccess(false);
     try {
-      const { error } = await supabase.auth.signInWithOtp({ email });
-      if (error) {
-        setError(error.message);
+      const { error: signInError } = await supabase.auth.signInWithOtp({ email });
+      if (signInError) {
+        setError(signInError.message);
       } else {
         setSuccess(true);
         if (onAuthSuccess) onAuthSuccess();

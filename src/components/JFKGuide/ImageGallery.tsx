@@ -49,14 +49,15 @@ export default function ImageGallery() {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8" aria-label="Step-by-step image gallery">
       {images.map((image, index) => (
         <div key={index} className="bg-card rounded-xl shadow-lg overflow-hidden" tabIndex={0} aria-label={`Step ${index + 1}: ${image.alt}`}> 
-          <Image
-            src={`/images/${image.filename}`}
-            alt={image.alt}
-            className="w-full h-40 md:h-60 object-cover"
-            style={{ aspectRatio: '3/4' }}
-            width={400}
-            height={300}
-          />
+          <div className="w-full h-80 relative overflow-hidden">
+            <Image
+              src={`/images/${image.filename}`}
+              alt={image.alt}
+              className="w-full h-full object-cover"
+              width={400}
+              height={720}
+            />
+          </div>
           <div className="p-4">
             <h3 className="font-semibold mb-2">Step {index + 1}</h3>
             <p className="text-sm text-muted-foreground">{image.description}</p>
