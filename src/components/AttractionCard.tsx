@@ -29,6 +29,27 @@ export default function AttractionCard({ attraction }: { attraction: Attraction 
         {attraction.duration && <span>⏱ {attraction.duration}</span>}
         {attraction.location && <span>📍 {attraction.location}</span>}
       </div>
+      {attraction.resources && attraction.resources.length > 0 && (
+        <div className="flex flex-col gap-1 mt-2">
+          {attraction.resources.map((resource, idx) => {
+            const isExternal = /^https?:\/\//i.test(resource.url);
+            const externalUrl = isExternal ? resource.url : `https://${resource.url.replace(/^\/*/, "")}`;
+            return (
+              <a
+                key={resource.url + idx}
+                href={externalUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary underline text-xs hover:text-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary flex items-center gap-1"
+                aria-label={`External resource: ${resource.text}`}
+              >
+                {resource.text}
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="inline-block ml-1" aria-hidden="true"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 13v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6m5-3h-5m5 0v5m0-5L10 14" /></svg>
+              </a>
+            );
+          })}
+        </div>
+      )}
       {attraction.notes && (
         <div className="text-xs italic text-muted-foreground mt-2">{attraction.notes}</div>
       )}

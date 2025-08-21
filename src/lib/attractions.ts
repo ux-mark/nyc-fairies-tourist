@@ -1,5 +1,10 @@
 import { supabase } from './supabase';
 
+export type AttractionResource = {
+  text: string;
+  url: string;
+};
+
 export type Attraction = {
   id: string;
   name: string;
@@ -8,7 +13,7 @@ export type Attraction = {
   price_range?: string;
   duration?: string;
   location?: string;
-  resources?: string[];
+  resources?: AttractionResource[];
   notes?: string;
   nearby_attractions?: string[];
   walking_distance?: string;

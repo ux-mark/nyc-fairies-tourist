@@ -15,11 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "NYC Tourist Info – Plan Your Trip",
+  title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!",
   description: "Browse NYC attractions, filter by category, and build a day-by-day schedule.",
   metadataBase: new URL("https://nyc-tourist-info.example.com"),
   openGraph: {
-    title: "NYC Tourist Info – Plan Your Trip",
+    title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!",
     description: "Browse NYC attractions, filter by category, and build a day-by-day schedule.",
     url: "https://nyc-tourist-info.example.com",
     siteName: "NYC Tourist Info",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "NYC Tourist Info – Plan Your Trip",
+    title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!",
     description: "Browse NYC attractions, filter by category, and build a day-by-day schedule.",
     images: ["/public/globe.svg"],
     site: "@nyctouristinfo",

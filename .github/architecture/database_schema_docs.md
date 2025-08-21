@@ -19,7 +19,7 @@ CREATE TABLE attractions (
   price_range TEXT,                      -- Human-readable price (e.g., '$120-200')
   duration TEXT,                         -- Expected visit time (e.g., '2.5-3 hours')
   location TEXT,                         -- Geographic description
-  resources TEXT[],                      -- Array of helpful URLs/websites
+  resources JSONB,                       -- Array of objects: [{"text": "Official Site", "url": "https://..."}]
   notes TEXT,                           -- Additional descriptive information
   nearby_attractions TEXT[],             -- Array of related attraction names
   walking_distance TEXT,                 -- Distance to nearby attractions
@@ -121,6 +121,11 @@ Currently configured with permissive policies for MVP/testing:
 
 ```typescript
 // Database schema interfaces
+interface AttractionResource {
+  text: string;
+  url: string;
+}
+
 interface Attraction {
   id: string;
   name: string;
@@ -129,7 +134,7 @@ interface Attraction {
   price_range?: string;
   duration?: string;
   location?: string;
-  resources?: string[];
+  resources?: AttractionResource[];
   notes?: string;
   nearby_attractions?: string[];
   walking_distance?: string;

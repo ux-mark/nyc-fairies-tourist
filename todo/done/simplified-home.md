@@ -149,7 +149,7 @@ Replace the current builder (which lists all attractions with add/remove) with a
 
 ## Metadata & head: `src/app/layout.tsx`
 - Update `metadata` to be project-specific:
-  - `title: "NYC Tourist Info – Plan Your Trip"`
+  - `title: "Visit 🧚 the 🧚‍♀️ Fairies - in 🗽 NYC!"`
   - `description: "Browse NYC attractions, filter by category, and build a day-by-day schedule."`
   - Add `metadataBase`, `openGraph`, and `twitter` objects if desired.
 
