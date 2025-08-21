@@ -158,6 +158,8 @@ export const loadTripDetails = async (
         name: a.attraction_name,
         category: '',
         tags: [],
+        location: '',
+        status: 'approved',
       };
       daysMap.get(a.day_date)!.push(attraction);
     });

@@ -14,6 +14,7 @@ import AuthModal from "./AuthModal";
 			{ name: "Attractions", href: "/" },
 			{ name: "Before NYC", href: "/pre-departure" },
 			{ name: "Getting here", href: "/jfk-to-manhattan" },
+			...(user ? [{ name: "My Attractions", href: "/my-attractions" }] : []),
 		];
 
 		return (

@@ -1,9 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { getAttractions, Attraction } from "../lib/attractions";
-import AttractionCard from "./AttractionCard";
+import EditableAttractionCard from "./EditableAttractionCard";
+import AddAttractionForm from "./AddAttractionForm";
 import SearchBar from "./SearchBar";
 import CategoryFilter from "./CategoryFilter";
+
 
 export default function AttractionsList() {
   const [allAttractions, setAllAttractions] = useState<Attraction[]>([]);
@@ -11,20 +13,22 @@ export default function AttractionsList() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const loadAttractions = async () => {
+    setLoading(true);
+    try {
+      const data = await getAttractions();
+      setAllAttractions(data);
+      setFiltered(data);
+    } catch {
+      setAllAttractions([]);
+      setFiltered([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    (async () => {
-      setLoading(true);
-      try {
-        const data = await getAttractions();
-        setAllAttractions(data);
-        setFiltered(data);
-        } catch {
-          setAllAttractions([]);
-          setFiltered([]);
-      } finally {
-        setLoading(false);
-      }
-    })();
+    loadAttractions();
   }, []);
 
   const handleSearch = (query: string) => {
@@ -53,6 +57,7 @@ export default function AttractionsList() {
 
   return (
     <>
+      <AddAttractionForm onSuccess={loadAttractions} />
       <CategoryFilter selected={selectedCategory} onSelect={handleCategory} />
       <SearchBar onSearch={handleSearch} />
       {loading ? (
@@ -60,7 +65,7 @@ export default function AttractionsList() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filtered.map((attraction: Attraction) => (
-            <AttractionCard key={attraction.id} attraction={attraction} />
+            <EditableAttractionCard key={attraction.id} attraction={attraction} onUpdate={loadAttractions} />
           ))}
         </div>
       )}

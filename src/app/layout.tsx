@@ -1,5 +1,5 @@
+"// Removed 'use client' directive"
 import type { Metadata } from "next";
-import Header from "../components/Header";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next"
@@ -44,22 +44,14 @@ export const metadata: Metadata = {
 };
 
 
-import React from "react";
-import Footer from "../components/Footer";
-import { ScheduleProvider } from "../lib/schedule-context";
-import { AuthProvider } from "../lib/auth-context";
+
+import ClientProviders from "./ClientProviders";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <AuthProvider>
-          <ScheduleProvider>
-            <Header />
-            {children}
-            <Footer />
-          </ScheduleProvider>
-        </AuthProvider>
+        <ClientProviders>{children}</ClientProviders>
         <Analytics />
       </body>
     </html>
