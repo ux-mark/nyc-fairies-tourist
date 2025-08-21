@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cozy Room Inspired Color Palette</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0066FF 0%, #003399 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #FF6B35, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+        
+        .palette-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+        
+        .color-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .color-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .color-swatch {
+            height: 120px;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .color-info {
+            padding: 20px;
+        }
+        
+        .color-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .color-hex {
+            color: #666;
+            font-family: 'Courier New', monospace;
+            margin-bottom: 10px;
+        }
+        
+        .color-usage {
+            font-size: 0.9rem;
+            color: #888;
+            line-height: 1.4;
+        }
+        
+        .demo-section {
+            margin-top: 50px;
+        }
+        
+        .demo-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .demo-header h2 {
+            color: #0066FF;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+        
+        .demo-website {
+            background: #FFFACD;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .demo-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #0066FF;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+        
+        .demo-logo {
+            color: #FFFACD;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .demo-nav-links {
+            display: flex;
+            gap: 20px;
+        }
+        
+        .demo-nav-links a {
+            color: #00BFFF;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: background 0.3s ease;
+        }
+        
+        .demo-nav-links a:hover {
+            background: rgba(0, 191, 255, 0.2);
+        }
+        
+        .demo-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        .demo-main {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 4px solid #FF6B35;
+        }
+        
+        .demo-main h3 {
+            color: #0066FF;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .demo-main p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .demo-button {
+            background: linear-gradient(135deg, #FF6B35, #FFD700);
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s ease;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .demo-button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .demo-sidebar {
+            background: #0066FF;
+            padding: 25px;
+            border-radius: 10px;
+            color: white;
+        }
+        
+        .demo-sidebar h4 {
+            color: #00BFFF;
+            margin-bottom: 15px;
+        }
+        
+        .demo-sidebar ul {
+            list-style: none;
+        }
+        
+        .demo-sidebar li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .click-hint {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .color-swatch:hover .click-hint {
+            opacity: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .demo-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .demo-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cozy Living Room Palette</h1>
+            <p>A modern color scheme inspired by warm textures, vibrant lights, and natural elements</p>
+        </div>
+        
+        <div class="palette-grid">
+            <div class="color-card">
+                <div class="color-swatch" style="background: #0066FF;" onclick="copyColor('#0066FF')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Electric Royal Blue</div>
+                    <div class="color-hex">#0066FF</div>
+                    <div class="color-usage">Perfect for headers, navigation, and primary branding elements. A vibrant, commanding blue that demands attention.</div>
+                </div>
+            </div>
+            
+            <div class="color-card">
+                <div class="color-swatch" style="background: #00BFFF;" onclick="copyColor('#00BFFF')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Brilliant Sky Blue</div>
+                    <div class="color-hex">#00BFFF</div>
+                    <div class="color-usage">Great for links, buttons, and interactive elements. A dazzling blue that captures energy and excitement.</div>
+                </div>
+            </div>
+            
+            <div class="color-card">
+                <div class="color-swatch" style="background: #FF6B35;" onclick="copyColor('#FF6B35')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Vibrant Sunset Orange</div>
+                    <div class="color-hex">#FF6B35</div>
+                    <div class="color-usage">Ideal for call-to-action buttons and accent elements. A bold, energetic orange that creates immediate impact.</div>
+                </div>
+            </div>
+            
+            <div class="color-card">
+                <div class="color-swatch" style="background: #FFD700;" onclick="copyColor('#FFD700')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Pure Gold</div>
+                    <div class="color-hex">#FFD700</div>
+                    <div class="color-usage">Perfect for highlighting important content and creating luxury appeal. Bright, optimistic gold that radiates warmth.</div>
+                </div>
+            </div>
+            
+            <div class="color-card">
+                <div class="color-swatch" style="background: #00FF7F;" onclick="copyColor('#00FF7F')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Electric Spring Green</div>
+                    <div class="color-hex">#00FF7F</div>
+                    <div class="color-usage">Excellent for success states and fresh, natural elements. A vivid green that pulses with life and energy.</div>
+                </div>
+            </div>
+            
+            <div class="color-card">
+                <div class="color-swatch" style="background: #FFFACD;" onclick="copyColor('#FFFACD')">
+                    <div class="click-hint">Click to copy!</div>
+                </div>
+                <div class="color-info">
+                    <div class="color-name">Lemon Chiffon</div>
+                    <div class="color-hex">#FFFACD</div>
+                    <div class="color-usage">Perfect for backgrounds and creating breathing room. A bright, cheerful cream that keeps the palette light and airy.</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <div class="demo-header">
+                <h2>Palette in Action</h2>
+                <p>See how these colors work together in a modern website design</p>
+            </div>
+            
+            <div class="demo-website">
+                <nav class="demo-nav">
+                    <div class="demo-logo">CozyDesign</div>
+                    <div class="demo-nav-links">
+                        <a href="#home">Home</a>
+                        <a href="#about">About</a>
+                        <a href="#services">Services</a>
+                        <a href="#contact">Contact</a>
+                    </div>
+                </nav>
+                
+                <div class="demo-content">
+                    <main class="demo-main">
+                        <h3>Welcome to Modern Comfort</h3>
+                        <p>Experience the perfect blend of contemporary design and cozy warmth. Our color palette brings together the tranquility of deep blues, the energy of vibrant accents, and the comfort of natural earth tones.</p>
+                        <p>This combination creates websites that feel both professional and inviting, much like a well-designed living space that welcomes you home.</p>
+                        <button class="demo-button">Get Started</button>
+                    </main>
+                    
+                    <aside class="demo-sidebar">
+                        <h4>Quick Links</h4>
+                        <ul>
+                            <li>Design Gallery</li>
+                            <li>Color Theory</li>
+                            <li>Typography</li>
+                            <li>Inspiration</li>
+                            <li>Resources</li>
+                        </ul>
+                    </aside>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function copyColor(color) {
+            navigator.clipboard.writeText(color).then(function() {
+                // Create a temporary notification
+                const notification = document.createElement('div');
+                notification.textContent = `Copied ${color}!`;
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #0066FF;
+                    color: white;
+                    padding: 12px 20px;
+                    border-radius: 8px;
+                    z-index: 1000;
+                    font-weight: bold;
+                    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                    transform: translateY(-20px);
+                    opacity: 0;
+                    transition: all 0.3s ease;
+                `;
+                
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateY(0)';
+                    notification.style.opacity = '1';
+                }, 100);
+                
+                // Remove after delay
+                setTimeout(() => {
+                    notification.style.transform = 'translateY(-20px)';
+                    notification.style.opacity = '0';
+                    setTimeout(() => {
+                        document.body.removeChild(notification);
+                    }, 300);
+                }, 2000);
+            });
+        }
+        
+        // Add some interactive sparkle to the page
+        document.addEventListener('mousemove', function(e) {
+            if (Math.random() > 0.98) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+        
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.cssText = `
+                position: fixed;
+                left: ${x}px;
+                top: ${y}px;
+                width: 6px;
+                height: 6px;
+                background: #00BFFF;
+                border-radius: 50%;
+                pointer-events: none;
+                z-index: 1000;
+                animation: sparkleAnimation 1s ease-out forwards;
+            `;
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                document.body.removeChild(sparkle);
+            }, 1000);
+        }
+        
+        // Add CSS animation for sparkles
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkleAnimation {
+                0% {
+                    transform: scale(0) rotate(0deg);
+                    opacity: 1;
+                }
+                50% {
+                    transform: scale(1) rotate(180deg);
+                    opacity: 0.8;
+                }
+                100% {
+                    transform: scale(0) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

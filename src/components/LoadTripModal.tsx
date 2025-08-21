@@ -103,7 +103,7 @@ export default function LoadTripModal({ isOpen, onClose }: LoadTripModalProps) {
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         <h3 className="text-lg font-bold mb-4">Your Saved Trips</h3>
         {error && trips.length === 0 && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+          <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
             {error}
           </div>
         )}

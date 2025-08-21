@@ -17,10 +17,10 @@ import AuthModal from "./AuthModal";
 		];
 
 		return (
-			<header role="banner" className="w-full py-6 px-4 bg-primary text-primary-foreground shadow-md flex flex-col sticky top-0 z-20">
+			<header role="banner" className="w-full py-6 px-4 bg-primary-dark text-primary-foreground shadow-md flex flex-col sticky top-0 z-20">
 				<div className="flex items-center gap-2 flex-1 mb-2">
-					<span className="inline-block w-6 h-6 rounded-full bg-accent" aria-hidden="true" />
-					<h1 className="text-xl font-bold tracking-tight">Visit the  Fairies in NYC! 🧚‍♀️🗽🧚 </h1>
+					{/* <span className="inline-block w-6 h-6 rounded-full bg-accent" aria-hidden="true" /> */}
+					<h1 className="text-xl font-bold tracking-tight">Visit the Fairies in NYC! 🧚‍♀️🗽🧚 </h1>
 				</div>
 				{/* Navigation bar */}
 				<nav aria-label="Main navigation" className="mb-2">
@@ -53,7 +53,7 @@ import AuthModal from "./AuthModal";
 								{typeof user === 'object' && user !== null && 'email' in user ? (user as { email: string }).email : ''}
 							</span>
 							<button
-								className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
+								className="px-3 py-1 rounded bg-destructive text-destructive-foreground hover:bg-destructive/90 text-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-destructive"
 								onClick={signOut}
 							>
 								Logout

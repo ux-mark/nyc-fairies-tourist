@@ -7,9 +7,9 @@ import { useState } from 'react';
 function AccordionItem({ title, children, id }: { title: string; children: React.ReactNode; id: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border rounded-xl bg-white mb-4">
+    <div className="border border-border rounded-xl bg-card mb-4">
       <button
-        className="w-full flex justify-between items-center px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full flex justify-between items-center px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary text-card-foreground"
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
@@ -28,8 +28,8 @@ function AccordionItem({ title, children, id }: { title: string; children: React
 
 export default function MobileOptions() {
   return (
-    <section aria-labelledby="mobile-heading" className="bg-green-50 rounded-lg p-6 mb-6 shadow">
-      <h2 id="mobile-heading" className="text-2xl font-semibold mb-2">Mobile Phone Plans</h2>
+    <section aria-labelledby="mobile-heading" className="bg-success/5 border border-success/20 rounded-lg p-6 mb-6 shadow">
+      <h2 id="mobile-heading" className="text-2xl font-semibold mb-2 text-foreground">Mobile Phone Plans</h2>
       <AccordionItem title="Option 1: eSIM Plans (Recommended)" id="option-esim">
         <ul className="list-disc ml-6 mb-2">
           <li>Check if your phone supports eSIM (iPhone XS/newer, most recent Android)</li>
@@ -39,10 +39,10 @@ export default function MobileOptions() {
         </ul>
         <h4 className="text-md font-semibold mt-2">Top eSIM Providers for USA:</h4>
         <ul className="list-disc ml-6 mb-2">
-          <li><strong>Airalo</strong> – <Link href="https://www.airalo.com/" className="underline text-blue-700" target="_blank" rel="noopener">Plans from $4.50</Link></li>
+          <li><strong>Airalo</strong> – <Link href="https://www.airalo.com/" className="underline text-primary hover:text-primary/80" target="_blank" rel="noopener">Plans from $4.50</Link></li>
           <li><strong>Saily</strong> – Built-in VPN & Security</li>
           <li><strong>Holafly</strong> – Unlimited Data</li>
-          <li><strong>T-Mobile Prepaid eSIM</strong> – <Link href="https://prepaid.t-mobile.com/esim-app" className="underline text-blue-700" target="_blank" rel="noopener">US Carrier</Link></li>
+          <li><strong>T-Mobile Prepaid eSIM</strong> – <Link href="https://prepaid.t-mobile.com/esim-app" className="underline text-primary hover:text-primary/80" target="_blank" rel="noopener">US Carrier</Link></li>
         </ul>
       </AccordionItem>
       <AccordionItem title="Option 2: Physical SIM Cards" id="option-physical">
@@ -61,7 +61,7 @@ export default function MobileOptions() {
         <ul className="list-disc ml-6 mb-2">
           <li><strong>Apple Pay/Google Pay</strong> – Accepted everywhere, including subway</li>
           <li><strong>MTA app</strong> – For subway schedules and alerts</li>
-          <li><strong>MTA Train Times</strong> – For LIRR train from and to JFK (<Link href="/jfk-to-manhattan" className="underline text-blue-700">see guide</Link>)</li>
+          <li><strong>MTA Train Times</strong> – For LIRR train from and to JFK (<Link href="/jfk-to-manhattan" className="underline text-primary hover:text-primary/80">see guide</Link>)</li>
         </ul>
       </AccordionItem>
     </section>

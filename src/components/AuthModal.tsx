@@ -59,7 +59,7 @@ export default function AuthModal({ isOpen, onClose, onAuthSuccess }: AuthModalP
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         <h3 className="text-lg font-bold mb-4">Sign In</h3>
         {success ? (
-          <div className="text-green-600 text-center">
+          <div className="text-success text-center">
             Magic link sent!<br />
             Please check your email to sign in.
           </div>

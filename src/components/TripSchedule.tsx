@@ -133,7 +133,7 @@ export default function TripSchedule() {
                   Reset Schedule
                 </button>
                 <button
-                  className="flex-1 text-xs px-3 py-1 rounded bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
+                  className="flex-1 text-xs px-3 py-1 rounded bg-destructive/10 text-destructive border border-destructive/20 hover:bg-destructive/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-destructive"
                   onClick={() => requireAuth('delete')}
                 >
                   Delete My Data
@@ -162,7 +162,7 @@ export default function TripSchedule() {
               className={`border rounded-xl p-4 shadow-sm flex flex-col gap-2 ${activeDayIndex === i ? "border-primary bg-primary/5" : "bg-card"}`}
             >
               <button
-                className={`w-full text-left font-semibold mb-2 px-2 py-1 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary ${activeDayIndex === i ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}
+                className={`w-full text-left font-semibold mb-2 px-2 py-1 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary ${activeDayIndex === i ? "bg-primary-light text-primary-foreground" : "bg-muted text-foreground"}`}
                 onClick={() => setActiveDay(i)}
                 aria-current={activeDayIndex === i ? "date" : undefined}
               >

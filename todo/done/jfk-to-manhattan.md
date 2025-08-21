@@ -148,7 +148,7 @@ src/
 - Touch targets: Minimum 44px for interactive elements
 
 #### SEO Considerations
-- **Meta title:** "JFK to Manhattan Transportation Guide 2025 | Visit the  Fairies in NYC! 🧚‍♀️🗽🧚 "
+- **Meta title:** "JFK to Manhattan Transportation Guide 2025 | Visit the Fairies in NYC! 🧚‍♀️🗽🧚 "
 - **Meta description:** "Complete step-by-step guide from JFK Airport to Manhattan. AirTrain, LIRR, subway, and taxi options with current prices and schedules."
 - **Schema markup:** TransportationGuide structured data
 - **Image alt text:** Descriptive text for each step image

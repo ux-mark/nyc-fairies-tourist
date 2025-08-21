@@ -81,7 +81,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         {success ? (
           <div className="text-center">
-            <div className="text-green-500 text-4xl mb-4">✓</div>
+            <div className="text-success text-4xl mb-4">✓</div>
             <h3 className="text-lg font-bold mb-2">Trip Saved Successfully!</h3>
             <p className="text-muted-foreground mb-4">
               Your trip &quot;{tripName}&quot; with {totalAttractions} attractions has been saved.
@@ -95,7 +95,7 @@ export default function SaveTripModal({ isOpen, onClose }: SaveTripModalProps) {
             <h3 className="text-lg font-bold mb-4">Save Your Trip</h3>
             
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+              <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
                 {error}
               </div>
             )}

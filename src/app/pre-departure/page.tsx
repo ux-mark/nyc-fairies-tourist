@@ -13,7 +13,7 @@ export default function PreDeparturePage() {
         <meta name="keywords" content="ESTA, Visa Waiver Program, USA eSIM, NYC travel preparation" />
       </Head>
       <section className="py-8 px-4 max-w-3xl mx-auto">
-        <h1 className="text-3xl font-bold mb-2">Pre-Departure Essentials for Your NYC Trip with the Fairies</h1>
+        <h1 className="text-2xl font-bold mb-6">Pre-Departure Essentials for Your NYC Trip with the Fairies</h1>
         <div className="mb-8">
           <ESTAGuide />
         </div>

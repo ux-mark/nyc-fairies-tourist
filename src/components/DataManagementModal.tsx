@@ -63,7 +63,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
       <div className="bg-card rounded-xl shadow-xl max-w-md w-full p-6 border border-border">
         {success ? (
           <div className="text-center">
-            <div className="text-green-500 text-4xl mb-4">✓</div>
+            <div className="text-success text-4xl mb-4">✓</div>
             <h3 className="text-lg font-bold mb-2">Data Deleted Successfully</h3>
             <p className="text-muted-foreground">
               All your trips and personal data have been permanently removed from our servers.
@@ -71,13 +71,13 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
           </div>
         ) : (
           <form onSubmit={handleDeleteData}>
-            <h3 className="text-lg font-bold mb-4 text-red-600">Delete My Data</h3>
+            <h3 className="text-lg font-bold mb-4 text-destructive">Delete My Data</h3>
             
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded">
-              <p className="text-sm text-red-800 mb-2">
+            <div className="mb-4 p-4 bg-destructive/10 border border-destructive/20 rounded">
+              <p className="text-sm text-destructive mb-2">
                 <strong>Warning:</strong> This action cannot be undone.
               </p>
-              <ul className="text-xs text-red-700 list-disc list-inside space-y-1">
+              <ul className="text-xs text-destructive list-disc list-inside space-y-1">
                 <li>All your saved trips will be permanently deleted</li>
                 <li>Your account will be removed from our system</li>
                 <li>You won&apos;t be able to recover this data</li>
@@ -85,7 +85,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
             </div>
             
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-red-700 text-sm">
+              <div className="mb-4 p-3 bg-destructive/10 border border-destructive/20 rounded text-destructive text-sm">
                 {error}
               </div>
             )}
@@ -120,7 +120,7 @@ export default function DataManagementModal({ isOpen, onClose }: DataManagementM
               <button
                 type="submit"
                 disabled={loading || !confirmDelete}
-                className="flex-1 px-4 py-2 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-500"
+                className="flex-1 px-4 py-2 rounded bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-destructive"
               >
                 {loading ? 'Deleting...' : 'Delete All Data'}
               </button>

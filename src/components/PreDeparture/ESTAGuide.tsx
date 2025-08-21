@@ -8,9 +8,9 @@ import { useState } from 'react';
 function AccordionItem({ title, children, id }: { title: string; children: React.ReactNode; id: string }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="border rounded-xl bg-white mb-4">
+    <div className="border border-border rounded-xl bg-card mb-4">
       <button
-        className="w-full flex justify-between items-center px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
+        className="w-full flex justify-between items-center px-4 py-3 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-primary text-card-foreground"
         aria-expanded={open}
         aria-controls={id}
         onClick={() => setOpen((o) => !o)}
@@ -29,11 +29,11 @@ function AccordionItem({ title, children, id }: { title: string; children: React
 
 export default function ESTAGuide() {
   return (
-    <section aria-labelledby="esta-heading" className="bg-blue-50 rounded-lg p-6 mb-6 shadow">
-      <h2 id="esta-heading" className="text-2xl font-semibold mb-4">Visa Waiver Program (ESTA)</h2>
+    <section aria-labelledby="esta-heading" className="bg-primary/5 border border-primary/20 rounded-lg p-6 mb-6 shadow">
+      <h2 id="esta-heading" className="text-2xl font-semibold mb-4 text-foreground">Visa Waiver Program (ESTA)</h2>
       <AccordionItem title="Who Needs ESTA?" id="who-needs-esta">
   <p>If you&apos;re travelling from <strong>any of the 43 Visa Waiver Program countries</strong>, you need ESTA authorisation before boarding your flight to the US.</p>
-        <p className="mt-1 text-sm">VWP Countries Include: 🇮🇪 Ireland, 🇳🇿 New Zealand, 🇩🇪 Germany, 🇦🇺 Australia and <Link href="https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visa-waiver-program.html" className="underline text-blue-700" target="_blank" rel="noopener">others</Link>.</p>
+        <p className="mt-1 text-sm text-muted-foreground">VWP Countries Include: 🇮🇪 Ireland, 🇳🇿 New Zealand, 🇩🇪 Germany, 🇦🇺 Australia and <Link href="https://travel.state.gov/content/travel/en/us-visas/tourism-visit/visa-waiver-program.html" className="underline text-primary hover:text-primary/80" target="_blank" rel="noopener">others</Link>.</p>
       </AccordionItem>
       <AccordionItem title="ESTA Application Process" id="esta-application-process">
         <ul className="list-disc ml-6 mb-2">
@@ -41,8 +41,8 @@ export default function ESTAGuide() {
           <li><strong>Cost:</strong> $21 total ($4 processing, $17 authorisation if approved)</li>
           <li><strong>Requirements:</strong> Valid e-passport, passport valid 6+ months, return/onward ticket, no prior US visa denials or serious criminal history</li>
         </ul>
-        <p className="mt-2">🌐 <Link href="https://esta.cbp.dhs.gov/" className="underline text-blue-700" target="_blank" rel="noopener">Official ESTA Application</Link></p>
-        <p className="mt-2 text-red-600 font-semibold">⚠️ Only use the official .gov website – avoid third-party sites that charge extra fees!</p>
+        <p className="mt-2">🌐 <Link href="https://esta.cbp.dhs.gov/" className="underline text-primary hover:text-primary/80" target="_blank" rel="noopener">Official ESTA Application</Link></p>
+        <p className="mt-2 text-destructive font-semibold">⚠️ Only use the official .gov website – avoid third-party sites that charge extra fees!</p>
       </AccordionItem>
     </section>
   );

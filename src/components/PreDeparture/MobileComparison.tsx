@@ -90,8 +90,8 @@ export default function MobileComparison() {
   const bestPlans = getBestPlans(days, gb);
 
   return (
-    <section className="bg-white rounded-lg p-6 mb-6 shadow">
-      <h2 className="text-2xl font-semibold mb-4">Compare Mobile Plans</h2>
+    <section className="bg-card rounded-lg p-6 mb-6 shadow border border-border">
+      <h2 className="text-2xl font-semibold mb-4 text-card-foreground">Compare Mobile Plans</h2>
       <div className="flex flex-col md:flex-row gap-6 mb-6">
         <div className="flex-1">
           <label htmlFor="days" className="block text-sm font-medium mb-1">Trip Length (days)</label>
@@ -121,24 +121,24 @@ export default function MobileComparison() {
         </div>
       </div>
       <div className="overflow-x-auto">
-        <table className="min-w-full border text-sm">
+        <table className="min-w-full border border-border text-sm">
           <thead>
-            <tr className="bg-blue-100">
-              <th className="p-2 text-left">Provider</th>
-              <th className="p-2 text-left">Type</th>
-              <th className="p-2 text-left">Plan</th>
-              <th className="p-2 text-left">Price (USD)</th>
-              <th className="p-2 text-left">Notes</th>
+            <tr className="bg-primary/10">
+              <th className="p-2 text-left text-foreground">Provider</th>
+              <th className="p-2 text-left text-foreground">Type</th>
+              <th className="p-2 text-left text-foreground">Plan</th>
+              <th className="p-2 text-left text-foreground">Price (USD)</th>
+              <th className="p-2 text-left text-foreground">Notes</th>
             </tr>
           </thead>
           <tbody>
             {bestPlans.length === 0 ? (
-              <tr><td colSpan={5} className="p-4 text-center">No matching plans found.</td></tr>
+              <tr><td colSpan={5} className="p-4 text-center text-muted-foreground">No matching plans found.</td></tr>
             ) : (
               bestPlans.map((plan) => (
-                <tr key={plan.provider} className="border-b">
+                <tr key={plan.provider} className="border-b border-border">
                   <td className="p-2 font-semibold">
-                    <a href={plan.link} target="_blank" rel="noopener" className="underline text-blue-700">{plan.provider}</a>
+                    <a href={plan.link} target="_blank" rel="noopener" className="underline text-primary hover:text-primary/80">{plan.provider}</a>
                   </td>
                   <td className="p-2">{plan.type}</td>
                   <td className="p-2">

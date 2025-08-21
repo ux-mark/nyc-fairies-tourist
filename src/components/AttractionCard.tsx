@@ -40,7 +40,7 @@ export default function AttractionCard({ attraction }: { attraction: Attraction 
                 href={externalUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-primary underline text-xs hover:text-primary-dark focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary flex items-center gap-1"
+                className="text-primary underline text-xs hover:text-primary/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary flex items-center gap-1"
                 aria-label={`External resource: ${resource.text}`}
               >
                 {resource.text}
@@ -54,7 +54,7 @@ export default function AttractionCard({ attraction }: { attraction: Attraction 
         <div className="text-xs italic text-muted-foreground mt-2">{attraction.notes}</div>
       )}
       <button
-        className={`mt-4 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold shadow-sm transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary ${alreadyAdded ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary-dark'}`}
+        className={`mt-4 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-semibold shadow-sm transition-colors duration-150 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary ${alreadyAdded ? 'opacity-60 cursor-not-allowed' : 'hover:bg-primary/90'}`}
         onClick={() => !alreadyAdded && addToActiveDay(attraction)}
         disabled={alreadyAdded}
         aria-pressed={alreadyAdded}
