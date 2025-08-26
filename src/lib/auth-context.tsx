@@ -59,6 +59,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<object | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
+    // Spoof admin user in development for local testing
+    useEffect(() => {
+      if (
+        process.env.NODE_ENV === "development" &&
+        !user &&
+        !loading
+      ) {
+        setUser({
+          user_id: "dev-admin-id",
+          email: "admin@localhost",
+          role: "admin",
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+      }
+    }, [user, loading]);
 
   useEffect(() => {
     const getSession = async () => {

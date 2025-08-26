@@ -75,7 +75,14 @@ export default function AddAttractionForm({ onSuccess }: AddAttractionFormProps)
       return;
     }
     setLoading(true);
+    // Debug log form data before submit
+    if (typeof window !== 'undefined') {
+      console.log('[DEBUG] Submitting attraction:', formData);
+    }
     const result = await createAttraction(formData as Omit<Attraction, 'id' | 'created_at' | 'updated_at' | 'status'>, user.user_id);
+    if (!result.success && typeof window !== 'undefined') {
+      console.error('[DEBUG] Supabase error:', result.error);
+    }
     if (result.success) {
       setIsOpen(false);
       resetForm();
